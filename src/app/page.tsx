@@ -9,6 +9,7 @@ import { HomeworkList } from "@/components/homework-list";
 import { LogoutButton } from "@/components/logout-button";
 import { SeasonSwitcher } from "@/components/season-switcher";
 import { StudentCalendar } from "@/components/student-calendar";
+import { WishWordRoll } from "@/components/wish-word-roll";
 import { getStudentGoals, getStudentHomework } from "@/lib/dashboard";
 import { getStudentLessons } from "@/lib/lessons";
 import { moscowTodayKey } from "@/lib/moscow-time";
@@ -52,7 +53,9 @@ async function StudentHome() {
         <HomeworkList items={homework} />
       </div>
 
-      <p className="dash-wish">Have a wonderful day!</p>
+      <p className="dash-wish">
+        Have a <WishWordRoll /> day!
+      </p>
 
       <div className="dash-bottom">
         <GoalsList goals={goals} />
