@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
-:root {
+/* Autumn (Sep–Nov) is the default moss study baseline. */
+:root,
+.season-shell,
+.season-shell[data-season="autumn"] {
   --fog: #dde8e2;
   --paper: #f2f7f4;
   --ink: #1c2e27;
@@ -8,6 +11,62 @@
   --moss-deep: #2d5240;
   --vine: #a8c0b2;
   --alert: #8b3a3a;
+  --decor: color-mix(in srgb, var(--moss) 42%, var(--vine));
+  --wash-top: #cfdfd6;
+  --wash-bottom: #e8f1ec;
+  --glow-a: color-mix(in srgb, var(--vine) 55%, white);
+  --glow-b: color-mix(in srgb, var(--moss) 18%, var(--fog));
+  --background: var(--fog);
+  --foreground: var(--ink);
+}
+
+.season-shell[data-season="spring"] {
+  --fog: #e0ede6;
+  --paper: #f4faf6;
+  --ink: #1b3328;
+  --moss: #3f7a58;
+  --moss-deep: #2e5c42;
+  --vine: #a9cdb8;
+  --alert: #8b3a3a;
+  --decor: color-mix(in srgb, #c9899a 55%, var(--moss));
+  --wash-top: #d2e8db;
+  --wash-bottom: #eef6f1;
+  --glow-a: color-mix(in srgb, #d8b8c2 45%, white);
+  --glow-b: color-mix(in srgb, var(--moss) 16%, var(--fog));
+  --background: var(--fog);
+  --foreground: var(--ink);
+}
+
+.season-shell[data-season="summer"] {
+  --fog: #d9e8e9;
+  --paper: #f0f7f6;
+  --ink: #1a3030;
+  --moss: #2f6b6a;
+  --moss-deep: #245453;
+  --vine: #9fbfbf;
+  --alert: #8b3a3a;
+  --decor: color-mix(in srgb, var(--moss) 50%, #7aa8a0);
+  --wash-top: #c9dde0;
+  --wash-bottom: #e8f2f2;
+  --glow-a: color-mix(in srgb, #b7d4d6 60%, white);
+  --glow-b: color-mix(in srgb, var(--moss) 14%, var(--fog));
+  --background: var(--fog);
+  --foreground: var(--ink);
+}
+
+.season-shell[data-season="winter"] {
+  --fog: #dce4ec;
+  --paper: #f3f6f9;
+  --ink: #1a2834;
+  --moss: #3d5a6c;
+  --moss-deep: #2e4554;
+  --vine: #a8b6c4;
+  --alert: #8b3a3a;
+  --decor: color-mix(in srgb, var(--moss) 35%, white);
+  --wash-top: #cdd8e4;
+  --wash-bottom: #ebf0f5;
+  --glow-a: color-mix(in srgb, #c5d2df 65%, white);
+  --glow-b: color-mix(in srgb, var(--moss) 12%, var(--fog));
   --background: var(--fog);
   --foreground: var(--ink);
 }
@@ -28,18 +87,19 @@ body {
   color: var(--ink);
   font-family: var(--font-body), system-ui, sans-serif;
   background-color: var(--fog);
+}
+
+.season-shell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  color: var(--ink);
+  background-color: var(--fog);
   background-image:
-    radial-gradient(
-      ellipse 120% 80% at 10% -10%,
-      color-mix(in srgb, var(--vine) 55%, white) 0%,
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse 90% 70% at 100% 0%,
-      color-mix(in srgb, var(--moss) 18%, var(--fog)) 0%,
-      transparent 50%
-    ),
-    linear-gradient(180deg, #cfdfd6 0%, var(--fog) 38%, #e8f1ec 100%),
+    radial-gradient(ellipse 120% 80% at 10% -10%, var(--glow-a) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 70% at 100% 0%, var(--glow-b) 0%, transparent 50%),
+    linear-gradient(180deg, var(--wash-top) 0%, var(--fog) 38%, var(--wash-bottom) 100%),
     radial-gradient(
       circle at 1px 1px,
       color-mix(in srgb, var(--vine) 55%, transparent) 1px,
@@ -69,18 +129,99 @@ a {
   max-width: 14ch;
 }
 
+/* ——— Seasonal stage + decor ——— */
+
+.seasonal-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.seasonal-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.seasonal-motif {
+  position: absolute;
+  display: block;
+  width: clamp(1.55rem, 3.2vw, 2.35rem);
+  height: clamp(1.55rem, 3.2vw, 2.35rem);
+  color: var(--decor);
+  opacity: 0.38;
+}
+
+.seasonal-motif svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.seasonal-motif--tl {
+  top: 8%;
+  left: 6%;
+}
+
+.seasonal-motif--tr {
+  top: 12%;
+  right: 7%;
+}
+
+.seasonal-motif--bl {
+  bottom: 10%;
+  left: 8%;
+}
+
+.seasonal-motif--br {
+  bottom: 14%;
+  right: 6%;
+}
+
+.seasonal-motif--ml {
+  top: 46%;
+  left: 4%;
+}
+
+.seasonal-motif--mr {
+  top: 42%;
+  right: 5%;
+}
+
+.seasonal-motif--drift-a {
+  animation: motif-drift-a 9s ease-in-out infinite;
+}
+
+.seasonal-motif--drift-b {
+  animation: motif-drift-b 11s ease-in-out infinite;
+}
+
+.seasonal-motif--drift-c {
+  animation: motif-drift-c 10s ease-in-out infinite;
+}
+
+.login-composition,
+.home-center,
+.home-bar,
+.home-hero {
+  position: relative;
+  z-index: 1;
+}
+
 /* ——— Login ——— */
 
 .login-stage {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   padding: clamp(1.5rem, 5vw, 4rem);
 }
 
 .login-composition {
   width: min(100%, 26rem);
+  text-align: left;
   animation: rise-in 0.7s ease-out both;
 }
 
@@ -184,12 +325,14 @@ a {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: clamp(1.5rem, 4vw, 2.75rem);
   padding: clamp(1.25rem, 4vw, 2.5rem);
   padding-bottom: clamp(2.5rem, 6vw, 4rem);
 }
 
 .home-bar {
+  width: min(100%, 36rem);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -206,6 +349,15 @@ a {
 
 .logout-button:hover {
   background: color-mix(in srgb, var(--paper) 70%, white);
+}
+
+.home-center {
+  width: min(100%, 36rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.35rem, 3.5vw, 2.25rem);
+  flex: 1;
+  justify-content: center;
 }
 
 .home-hero {
@@ -468,11 +620,50 @@ button.calendar-cell:not(:disabled):hover {
   }
 }
 
+@keyframes motif-drift-a {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.34;
+  }
+  50% {
+    transform: translateY(-0.45rem) rotate(4deg);
+    opacity: 0.48;
+  }
+}
+
+@keyframes motif-drift-b {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.32;
+  }
+  50% {
+    transform: translateY(0.4rem) rotate(-5deg);
+    opacity: 0.46;
+  }
+}
+
+@keyframes motif-drift-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-2deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate3d(0.25rem, -0.35rem, 0) rotate(3deg);
+    opacity: 0.44;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .login-composition,
   .home-hero,
   .calendar-grid--motion,
-  .lesson-panel--open {
+  .lesson-panel--open,
+  .seasonal-motif--drift-a,
+  .seasonal-motif--drift-b,
+  .seasonal-motif--drift-c {
     animation: none;
   }
 
@@ -487,6 +678,10 @@ button.calendar-cell:not(:disabled):hover {
     padding-top: 12vh;
   }
 
+  .home-center {
+    justify-content: flex-start;
+  }
+
   .brand {
     font-size: clamp(2.1rem, 9vw, 2.75rem);
   }
@@ -494,5 +689,14 @@ button.calendar-cell:not(:disabled):hover {
   .calendar-nav-btn {
     width: 2.35rem;
     height: 2.35rem;
+  }
+
+  .seasonal-motif--ml,
+  .seasonal-motif--mr {
+    display: none;
+  }
+
+  .seasonal-motif {
+    opacity: 0.28;
   }
 }
