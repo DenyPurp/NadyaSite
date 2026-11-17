@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, type ReactNode } from "react";
 import {
   updateGoalProgressAction,
   type AdminActionState,
@@ -9,11 +9,14 @@ import {
 type GoalProgressControlProps = {
   goalId: string;
   initialProgress: number;
+  /** Optional trailing control (e.g. delete) aligned with the slider row */
+  trailing?: ReactNode;
 };
 
 export function GoalProgressControl({
   goalId,
   initialProgress,
+  trailing,
 }: GoalProgressControlProps) {
   const [progress, setProgress] = useState(initialProgress);
   const [pending, startTransition] = useTransition();
@@ -76,6 +79,7 @@ export function GoalProgressControl({
         >
           {pending ? "…" : "Сохранить"}
         </button>
+        {trailing}
       </div>
       {feedback.error ? (
         <p className="form-error" role="alert">
