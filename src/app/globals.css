@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 /*
-  Cozy English palette (exact):
+  Cozy English brand tokens — EXACT hex (never rewrite these five):
   Dark Green #0A3323 · Moss Green #839958 · Beige #F7F4D5 ·
   Rosy Brown #D3968C · Midnight Green #105666
-  Season variants only tint these five — no new hues.
+  Seasons only lightly tint wash/fog/glow from these hues — no new greens.
 */
 
 :root,
@@ -16,73 +16,77 @@
   --rosy-brown: #d3968c;
   --midnight-green: #105666;
 
-  --ink: var(--dark-green);
-  --moss: var(--moss-green);
-  --moss-deep: var(--dark-green);
-  --paper: var(--beige);
-  --fog: color-mix(in srgb, var(--beige) 88%, var(--moss-green));
-  --vine: color-mix(in srgb, var(--moss-green) 45%, var(--beige));
-  --alert: var(--rosy-brown);
-  --accent: var(--midnight-green);
-  --decor: color-mix(in srgb, var(--moss-green) 55%, var(--rosy-brown));
-  --wash-top: color-mix(in srgb, var(--beige) 72%, var(--moss-green));
-  --wash-bottom: color-mix(in srgb, var(--beige) 92%, var(--midnight-green));
-  --glow-a: color-mix(in srgb, var(--beige) 70%, white);
-  --glow-b: color-mix(in srgb, var(--moss-green) 22%, var(--beige));
+  /* Semantic aliases lock to brand hex (autumn = baseline) */
+  --ink: #0a3323;
+  --moss: #839958;
+  --moss-deep: #0a3323;
+  --paper: #f7f4d5;
+  --fog: #f7f4d5;
+  --vine: #839958;
+  --alert: #d3968c;
+  --accent: #105666;
+  --decor: #d3968c;
+  --wash-top: color-mix(in srgb, #f7f4d5 94%, #839958);
+  --wash-bottom: color-mix(in srgb, #f7f4d5 96%, #105666);
+  --glow-a: color-mix(in srgb, #f7f4d5 88%, white);
+  --glow-b: color-mix(in srgb, #839958 10%, #f7f4d5);
   --background: var(--fog);
   --foreground: var(--ink);
 }
 
+/* Light rosy wash only — brand greens stay exact */
 .season-shell[data-season="spring"] {
-  --ink: var(--dark-green);
-  --moss: color-mix(in srgb, var(--moss-green) 78%, var(--rosy-brown));
-  --moss-deep: color-mix(in srgb, var(--dark-green) 82%, var(--rosy-brown));
-  --paper: var(--beige);
-  --fog: color-mix(in srgb, var(--beige) 86%, var(--rosy-brown));
-  --vine: color-mix(in srgb, var(--rosy-brown) 40%, var(--beige));
-  --alert: var(--rosy-brown);
-  --accent: var(--midnight-green);
-  --decor: color-mix(in srgb, var(--rosy-brown) 65%, var(--moss-green));
-  --wash-top: color-mix(in srgb, var(--beige) 78%, var(--rosy-brown));
-  --wash-bottom: color-mix(in srgb, var(--beige) 90%, var(--moss-green));
-  --glow-a: color-mix(in srgb, var(--rosy-brown) 28%, white);
-  --glow-b: color-mix(in srgb, var(--moss-green) 18%, var(--beige));
+  --ink: #0a3323;
+  --moss: #839958;
+  --moss-deep: #0a3323;
+  --paper: #f7f4d5;
+  --fog: color-mix(in srgb, #f7f4d5 94%, #d3968c);
+  --vine: #839958;
+  --alert: #d3968c;
+  --accent: #105666;
+  --decor: #d3968c;
+  --wash-top: color-mix(in srgb, #f7f4d5 92%, #d3968c);
+  --wash-bottom: color-mix(in srgb, #f7f4d5 95%, #839958);
+  --glow-a: color-mix(in srgb, #d3968c 12%, white);
+  --glow-b: color-mix(in srgb, #839958 8%, #f7f4d5);
   --background: var(--fog);
   --foreground: var(--ink);
 }
 
+/* Light midnight wash only — brand greens stay exact */
 .season-shell[data-season="summer"] {
-  --ink: color-mix(in srgb, var(--dark-green) 70%, var(--midnight-green));
-  --moss: color-mix(in srgb, var(--moss-green) 55%, var(--midnight-green));
-  --moss-deep: var(--midnight-green);
-  --paper: var(--beige);
-  --fog: color-mix(in srgb, var(--beige) 82%, var(--midnight-green));
-  --vine: color-mix(in srgb, var(--midnight-green) 35%, var(--beige));
-  --alert: var(--rosy-brown);
-  --accent: var(--midnight-green);
-  --decor: color-mix(in srgb, var(--midnight-green) 60%, var(--moss-green));
-  --wash-top: color-mix(in srgb, var(--beige) 70%, var(--midnight-green));
-  --wash-bottom: color-mix(in srgb, var(--beige) 88%, var(--moss-green));
-  --glow-a: color-mix(in srgb, var(--midnight-green) 18%, white);
-  --glow-b: color-mix(in srgb, var(--moss-green) 16%, var(--beige));
+  --ink: #0a3323;
+  --moss: #839958;
+  --moss-deep: #0a3323;
+  --paper: #f7f4d5;
+  --fog: color-mix(in srgb, #f7f4d5 94%, #105666);
+  --vine: #839958;
+  --alert: #d3968c;
+  --accent: #105666;
+  --decor: #105666;
+  --wash-top: color-mix(in srgb, #f7f4d5 92%, #105666);
+  --wash-bottom: color-mix(in srgb, #f7f4d5 95%, #839958);
+  --glow-a: color-mix(in srgb, #105666 10%, white);
+  --glow-b: color-mix(in srgb, #839958 8%, #f7f4d5);
   --background: var(--fog);
   --foreground: var(--ink);
 }
 
+/* Cooler beige fog only — brand greens stay exact */
 .season-shell[data-season="winter"] {
-  --ink: color-mix(in srgb, var(--dark-green) 55%, var(--midnight-green));
-  --moss: color-mix(in srgb, var(--midnight-green) 72%, var(--moss-green));
-  --moss-deep: var(--midnight-green);
-  --paper: color-mix(in srgb, var(--beige) 94%, var(--midnight-green));
-  --fog: color-mix(in srgb, var(--beige) 78%, var(--midnight-green));
-  --vine: color-mix(in srgb, var(--midnight-green) 28%, var(--beige));
-  --alert: var(--rosy-brown);
-  --accent: var(--midnight-green);
-  --decor: color-mix(in srgb, var(--midnight-green) 45%, var(--beige));
-  --wash-top: color-mix(in srgb, var(--beige) 68%, var(--midnight-green));
-  --wash-bottom: color-mix(in srgb, var(--beige) 90%, var(--dark-green));
-  --glow-a: color-mix(in srgb, var(--beige) 82%, white);
-  --glow-b: color-mix(in srgb, var(--midnight-green) 14%, var(--beige));
+  --ink: #0a3323;
+  --moss: #839958;
+  --moss-deep: #0a3323;
+  --paper: #f7f4d5;
+  --fog: color-mix(in srgb, #f7f4d5 92%, #105666);
+  --vine: #839958;
+  --alert: #d3968c;
+  --accent: #105666;
+  --decor: #105666;
+  --wash-top: color-mix(in srgb, #f7f4d5 90%, #105666);
+  --wash-bottom: color-mix(in srgb, #f7f4d5 96%, #0a3323);
+  --glow-a: color-mix(in srgb, #f7f4d5 90%, white);
+  --glow-b: color-mix(in srgb, #105666 8%, #f7f4d5);
   --background: var(--fog);
   --foreground: var(--ink);
 }
@@ -118,7 +122,7 @@ body {
     linear-gradient(180deg, var(--wash-top) 0%, var(--fog) 38%, var(--wash-bottom) 100%),
     radial-gradient(
       circle at 1px 1px,
-      color-mix(in srgb, var(--vine) 55%, transparent) 1px,
+      color-mix(in srgb, var(--vine) 22%, transparent) 1px,
       transparent 0
     );
   background-size: auto, auto, auto, 22px 22px;
@@ -352,17 +356,21 @@ a {
   max-width: none;
 }
 
+/* Lesson detail MUST sit beside the date grid — never below */
 .calendar-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
   gap: clamp(0.85rem, 2vw, 1.35rem);
-  align-items: start;
+  min-width: 0;
 }
 
 .calendar-main {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -398,7 +406,9 @@ a {
   min-height: 8rem;
   padding: 0.85rem 0.9rem;
   border-top: none;
-  border-left: 1.5px solid color-mix(in srgb, var(--vine) 70%, transparent);
+  border-left: 1.5px solid color-mix(in srgb, var(--vine) 35%, transparent);
+  flex: 0 0 min(42%, 16rem);
+  max-width: 16rem;
 }
 
 .calendar--compact .lesson-topic {
@@ -548,11 +558,16 @@ button.calendar-cell:not(:disabled):hover {
 }
 
 .lesson-panel {
+  flex: 0 0 min(44%, 18rem);
+  max-width: 18rem;
+  min-width: 11rem;
   min-height: 6.5rem;
   padding: 0.85rem 1rem;
-  border-left: 1.5px solid color-mix(in srgb, var(--vine) 70%, transparent);
-  background: color-mix(in srgb, var(--paper) 55%, transparent);
+  border-top: none;
+  border-left: 1.5px solid color-mix(in srgb, var(--vine) 35%, transparent);
+  background: color-mix(in srgb, var(--paper) 82%, white);
   border-radius: 0 0.35rem 0.35rem 0;
+  align-self: stretch;
 }
 
 .lesson-panel--open {
@@ -623,19 +638,24 @@ button.calendar-cell:not(:disabled):hover {
 .dash-top,
 .dash-bottom {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr);
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 0.75fr);
   gap: clamp(1rem, 2.5vw, 1.75rem);
   align-items: start;
 }
 
+.dash-top-cal {
+  min-width: 0;
+}
+
 .dash-wish {
-  margin: 0.25rem 0;
+  margin: 0.55rem 0;
   text-align: center;
   font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-size: clamp(2.35rem, 6.5vw, 3.85rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--moss-deep);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--dark-green);
   animation: wish-soft 1.1s ease-out both;
 }
 
@@ -746,6 +766,8 @@ button.calendar-cell:not(:disabled):hover {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  flex: 1 1 auto;
+  min-width: 0;
   width: 100%;
 }
 
@@ -755,18 +777,45 @@ button.calendar-cell:not(:disabled):hover {
 
 .goal-slider {
   width: 100%;
-  accent-color: var(--moss-green);
+  accent-color: #839958;
   cursor: pointer;
 }
 
 .goal-slider-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
 .goal-slider-row .admin-submit {
   flex-shrink: 0;
+  min-height: 2.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.9rem;
+  line-height: 1.2;
+}
+
+/* Delete sits in the slider row beside Save — same baseline */
+.goal-admin-delete {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border: none;
+}
+
+.goal-admin-delete .admin-submit,
+.goal-admin-delete .admin-submit--danger {
+  margin: 0;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  line-height: 1.2;
 }
 
 .dash-reserve {
@@ -1131,32 +1180,26 @@ button.calendar-cell:not(:disabled):hover {
 @media (max-width: 860px) {
   .dash-top,
   .dash-bottom,
-  .admin-grid,
-  .calendar-layout {
+  .admin-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Keep lesson panel beside calendar even on narrow viewports */
+  .calendar-layout {
+    flex-direction: row;
+    flex-wrap: nowrap;
   }
 
   .lesson-panel,
   .calendar--compact .lesson-panel {
-    border-left: none;
-    border-top: 1.5px solid color-mix(in srgb, var(--vine) 70%, transparent);
-    border-radius: 0 0 0.35rem 0.35rem;
+    flex: 0 0 min(40%, 13.5rem);
+    max-width: 13.5rem;
+    min-width: 9.5rem;
+    border-top: none;
+    border-left: 1.5px solid color-mix(in srgb, var(--vine) 35%, transparent);
+    border-radius: 0 0.35rem 0.35rem 0;
   }
 
-  .lesson-panel--open {
-    animation-name: detail-open-stack;
-  }
-}
-
-@keyframes detail-open-stack {
-  from {
-    opacity: 0;
-    transform: translateY(0.4rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (max-width: 480px) {

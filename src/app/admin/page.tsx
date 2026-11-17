@@ -312,16 +312,18 @@ async function AdminBody() {
                 <GoalProgressControl
                   goalId={goal.id}
                   initialProgress={goal.progress}
+                  trailing={
+                    <AdminForm
+                      action={deleteGoalAction}
+                      submitLabel="Удалить"
+                      danger
+                      confirmMessage={`Удалить цель «${goal.title}»?`}
+                      className="goal-admin-delete"
+                    >
+                      <input type="hidden" name="id" value={goal.id} />
+                    </AdminForm>
+                  }
                 />
-                <AdminForm
-                  action={deleteGoalAction}
-                  submitLabel="Удалить цель"
-                  danger
-                  confirmMessage={`Удалить цель «${goal.title}»?`}
-                  className="admin-form admin-form--row"
-                >
-                  <input type="hidden" name="id" value={goal.id} />
-                </AdminForm>
               </li>
             ))}
           </ul>
