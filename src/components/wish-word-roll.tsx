@@ -9,7 +9,7 @@ import {
   type RefObject,
 } from "react";
 
-const WORDS = ["wonderful", "amazing", "perfect", "nice", "good"] as const;
+const WORDS = ["wonderful", "fantastic", "perfect", "nice", "good"] as const;
 
 /** Vertical travel of one letter, matching DesignBookmark Word Roll. */
 const ROLL_TRAVEL = 1.05;
