@@ -657,16 +657,16 @@ button.calendar-cell:not(:disabled):hover {
   font-family: var(--font-display), Georgia, serif;
   font-size: clamp(2.35rem, 6.5vw, 3.85rem);
   font-weight: 700;
-  line-height: 1.12;
+  /* Shared with .wish-roll-slot height so the reel clips on the text line box. */
+  line-height: 1.25;
   letter-spacing: -0.025em;
   color: var(--dark-green);
   animation: wish-soft 1.1s ease-out both;
 }
 
-/* Word Roll: letter-by-letter vertical spring inside the wish line */
+/* Word Roll: vertical slot/reel (DesignBookmark) — not a horizontal slide */
 .wish-roll {
-  display: inline-flex;
-  align-items: center;
+  display: inline-block;
   vertical-align: baseline;
   margin: 0;
   padding: 0;
@@ -675,6 +675,7 @@ button.calendar-cell:not(:disabled):hover {
   color: var(--midnight-green);
   cursor: pointer;
   font: inherit;
+  font-size: 1em;
   letter-spacing: inherit;
   line-height: inherit;
   outline: none;
@@ -692,8 +693,13 @@ button.calendar-cell:not(:disabled):hover {
 .wish-roll-slot {
   position: relative;
   display: block;
-  height: 1.12em;
-  clip-path: inset(0 -0.35em);
+  /* Same em as .dash-wish line-height: clips top/bottom of the reel only. */
+  height: 1.25em;
+  overflow: hidden;
+  /* Wide horizontal inset — vertical mask only; avoid side-wipe look. */
+  clip-path: inset(0 -1.25em);
+  /* Reserve the line box so neighboring "Have a" / "day!" don't jump. */
+  vertical-align: baseline;
 }
 
 .wish-roll-word {
@@ -701,11 +707,17 @@ button.calendar-cell:not(:disabled):hover {
   left: 0;
   top: 0;
   display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  height: 1.25em;
+  will-change: contents;
 }
 
 .wish-roll-ch {
   display: inline-block;
   white-space: pre;
+  /* Vertical reel only — never animate X. */
+  transform: translate3d(0, 105%, 0);
   will-change: transform, opacity;
 }
 
