@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Alegreya, Manrope } from "next/font/google";
+import { SeasonShell, SeasonShellFallback } from "@/components/season-shell";
 import "./globals.css";
 
 const alegreya = Alegreya({
@@ -25,7 +27,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ru"
       className={`${alegreya.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Suspense fallback={<SeasonShellFallback>{children}</SeasonShellFallback>}>
+          <SeasonShell>{children}</SeasonShell>
+        </Suspense>
+      </body>
     </html>
   );
 }
