@@ -15,8 +15,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "NadyaSite",
-  description: "Учебный кабинет: вход и занятия",
+  title: "Cozy English with Nadya",
+  description: "Уютный кабинет английского: занятия, календарь и задания",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
