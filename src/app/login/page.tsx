@@ -4,7 +4,7 @@ export default function LoginPage() {
   return (
     <main className="login-stage">
       <div className="login-composition">
-        <p className="brand">NadyaSite</p>
+        <p className="brand">Cozy English with Nadya</p>
         <h1 className="login-lead">Войдите, чтобы открыть занятия</h1>
         <LoginForm />
         <p className="login-hint">Аккаунт выдаёт учитель — самостоятельной регистрации нет.</p>
