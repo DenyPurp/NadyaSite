@@ -116,16 +116,20 @@ body {
   min-height: 100%;
   color: var(--ink);
   background-color: var(--fog);
+  /* Soft watercolor photo + brand wash so UI chrome stays readable */
   background-image:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--wash-top) 82%, transparent) 0%,
+      color-mix(in srgb, var(--fog) 78%, transparent) 42%,
+      color-mix(in srgb, var(--wash-bottom) 86%, transparent) 100%
+    ),
     radial-gradient(ellipse 120% 80% at 10% -10%, var(--glow-a) 0%, transparent 55%),
     radial-gradient(ellipse 90% 70% at 100% 0%, var(--glow-b) 0%, transparent 50%),
-    linear-gradient(180deg, var(--wash-top) 0%, var(--fog) 38%, var(--wash-bottom) 100%),
-    radial-gradient(
-      circle at 1px 1px,
-      color-mix(in srgb, var(--vine) 22%, transparent) 1px,
-      transparent 0
-    );
-  background-size: auto, auto, auto, 22px 22px;
+    var(--season-bg, none);
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, center;
+  background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
