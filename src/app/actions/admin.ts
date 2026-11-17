@@ -79,6 +79,25 @@ export async function updateCourseAction(
   return { ok: true, message: "Курс обновлён." };
 }
 
+export async function deleteCourseAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireTeacher())) {
+    return { error: "Нет доступа." };
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) {
+    return { error: "Нет id курса." };
+  }
+
+  await prisma.course.delete({ where: { id } });
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { ok: true, message: "Курс удалён." };
+}
+
 export async function createMaterialAction(
   _prev: AdminActionState,
   formData: FormData,
@@ -90,17 +109,25 @@ export async function createMaterialAction(
   const title = String(formData.get("title") ?? "").trim();
   const typeRaw = String(formData.get("type") ?? "TEXT").trim();
   const content = String(formData.get("content") ?? "").trim();
-  const fileUrl = String(formData.get("fileUrl") ?? "").trim();
+  const uploadedUrl = String(formData.get("fileUrl") ?? "").trim();
+  const linkUrl = String(formData.get("linkUrl") ?? "").trim();
+  const fileUrl = uploadedUrl || linkUrl;
   const courseId = String(formData.get("courseId") ?? "").trim();
 
   if (!title || !courseId) {
     return { error: "Укажите название и курс." };
   }
 
-  const type =
+  let type =
     typeRaw === "FILE" || typeRaw === "LINK" || typeRaw === "TEXT"
       ? (typeRaw as MaterialType)
       : MaterialType.TEXT;
+
+  if (uploadedUrl) {
+    type = MaterialType.FILE;
+  } else if (linkUrl && type === MaterialType.TEXT) {
+    type = MaterialType.LINK;
+  }
 
   await prisma.material.create({
     data: {
@@ -146,6 +173,7 @@ export async function createHomeworkAction(
   const dateKey = String(formData.get("date") ?? "").trim();
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
+  const fileUrl = String(formData.get("fileUrl") ?? "").trim();
 
   if (!studentId || !dateKey || !title) {
     return { error: "Укажите ученика, дату и задание." };
@@ -155,12 +183,16 @@ export async function createHomeworkAction(
     return { error: "Дата в формате YYYY-MM-DD." };
   }
 
+  const descriptionWithFile = [description, fileUrl ? `Файл: ${fileUrl}` : ""]
+    .filter(Boolean)
+    .join("\n");
+
   await prisma.homework.create({
     data: {
       studentId,
       date: utcDateFromDayKey(dateKey),
       title,
-      description: description || null,
+      description: descriptionWithFile || null,
     },
   });
 
