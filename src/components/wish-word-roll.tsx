@@ -1,8 +1,18 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  memo,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 
 const WORDS = ["wonderful", "amazing", "perfect", "nice", "good"] as const;
+
+/** Vertical travel of one letter, matching DesignBookmark Word Roll. */
+const ROLL_TRAVEL = 1.05;
 
 type Spring = { x: number; v: number; t: number; k: number; c: number };
 
@@ -13,6 +23,8 @@ type LiveWord = {
   letters: Letter[];
   out: boolean;
 };
+
+type Timer = { t: number; fn: () => void };
 
 function spring(x: number, k = 400, c = 30): Spring {
   return { x, v: 0, t: x, k, c };
@@ -28,12 +40,31 @@ function clamp(v: number, a: number, b: number) {
   return Math.max(a, Math.min(b, v));
 }
 
-type Timer = { t: number; fn: () => void };
+function paintLetter(el: HTMLSpanElement, y: number) {
+  // Positive Y = below the slot; negative = above. Letters always travel
+  // on the vertical axis (slot/reel), never sideways.
+  el.style.transform = `translate3d(0, ${y * ROLL_TRAVEL * 100}%, 0)`;
+  el.style.opacity = String(clamp(1 - Math.abs(y) * 0.9, 0, 1));
+}
+
+/**
+ * Imperative slot host: must not re-render after mount, otherwise React
+ * would wipe the letter nodes the spring loop appends.
+ */
+const WishRollSlot = memo(function WishRollSlot({
+  slotRef,
+}: {
+  slotRef: RefObject<HTMLSpanElement | null>;
+}) {
+  return (
+    <span ref={slotRef} className="wish-roll-slot" aria-hidden="true" />
+  );
+});
 
 /**
  * Slot-machine word roll for the student wish line.
- * Motion pattern adapted from DesignBookmark Word Roll
- * (letter-by-letter vertical spring + width spring). Click/tap only.
+ * DesignBookmark Word Roll: letter-by-letter vertical spring + width spring.
+ * Click/tap (or Enter/Space) only — no autoplay.
  */
 export function WishWordRoll() {
   const labelId = useId();
@@ -44,6 +75,7 @@ export function WishWordRoll() {
   const widthRef = useRef(spring(0, 320, 30));
   const timersRef = useRef<Timer[]>([]);
   const reduceMotionRef = useRef(false);
+  const rollingRef = useRef(false);
   const [announcement, setAnnouncement] = useState(
     `Have a ${WORDS[0]} day!`,
   );
@@ -62,7 +94,7 @@ export function WishWordRoll() {
       return t;
     };
 
-    const make = (word: string): LiveWord => {
+    const make = (word: string, startY: number): LiveWord => {
       const el = document.createElement("span");
       el.className = "wish-roll-word";
       el.setAttribute("aria-hidden", "true");
@@ -70,8 +102,11 @@ export function WishWordRoll() {
         const l = document.createElement("span");
         l.className = "wish-roll-ch";
         l.textContent = ch;
+        // Apply the first frame immediately so letters never flash at rest
+        // (which reads as a sideways / pop-in before the reel starts).
+        paintLetter(l, startY);
         el.appendChild(l);
-        return { el: l, s: spring(1, 420, 26) };
+        return { el: l, s: spring(startY, 420, 26) };
       });
       slot.appendChild(el);
       return { el, letters, out: false };
@@ -89,6 +124,7 @@ export function WishWordRoll() {
           liveRef.current = liveRef.current.filter((x) => x !== w);
           return;
         }
+        // Outgoing letters roll up and out of the slot (−1 = above).
         w.letters.forEach((l, k) => {
           after(k * 0.022, () => {
             l.s.t = -1;
@@ -100,10 +136,13 @@ export function WishWordRoll() {
         });
       });
 
-      const w = make(word);
+      // Incoming letters start below the slot (+1) and spring to rest (0).
+      const startY = first || reduce ? 0 : 1;
+      const w = make(word, startY);
       w.letters.forEach((l, k) => {
         if (first || reduce) {
           l.s.x = l.s.t = 0;
+          paintLetter(l.el, 0);
         } else {
           after(0.06 + k * 0.028, () => {
             l.s.t = 0;
@@ -112,9 +151,31 @@ export function WishWordRoll() {
       });
       liveRef.current.push(w);
 
-      const measured = w.el.offsetWidth;
-      widthRef.current.t = measured;
-      if (first || reduce) widthRef.current.x = measured;
+      // Measure at rest layout width (transforms don't affect layout width).
+      const measured = Math.ceil(w.el.getBoundingClientRect().width);
+      if (first || reduce) {
+        widthRef.current.x = measured;
+        widthRef.current.t = measured;
+        slot.style.width = `${measured}px`;
+      } else {
+        // Keep the slot at least as wide as the outgoing word while letters
+        // reel vertically. Shrinking early side-clips glyphs and reads as a
+        // horizontal wipe instead of a vertical slot roll.
+        const hold = Math.max(widthRef.current.x, measured);
+        widthRef.current.t = hold;
+        // Settle width after outgoing letters have cleared the reel.
+        after(0.55, () => {
+          widthRef.current.t = measured;
+        });
+      }
+
+      rollingRef.current = !(first || reduce);
+      if (rollingRef.current) {
+        // Clear the flag after the staggered enter finishes (~last letter + settle).
+        after(0.06 + w.letters.length * 0.028 + 0.55, () => {
+          rollingRef.current = false;
+        });
+      }
 
       setAnnouncement(`Have a ${word} day!`);
       buttonRef.current?.setAttribute(
@@ -124,6 +185,8 @@ export function WishWordRoll() {
     };
 
     const next = () => {
+      // Ignore rapid clicks while a reel is mid-flight to avoid stacking glitches.
+      if (rollingRef.current && !reduceMotionRef.current) return;
       indexRef.current = (indexRef.current + 1) % WORDS.length;
       show(WORDS[indexRef.current]);
     };
@@ -145,7 +208,13 @@ export function WishWordRoll() {
     if (document.fonts) {
       document.fonts.ready.then(() => {
         const w = liveRef.current[liveRef.current.length - 1];
-        if (w) widthRef.current.t = w.el.offsetWidth;
+        if (!w || !slotRef.current) return;
+        const measured = Math.ceil(w.el.getBoundingClientRect().width);
+        widthRef.current.t = measured;
+        if (!rollingRef.current) {
+          widthRef.current.x = measured;
+          slotRef.current.style.width = `${measured}px`;
+        }
       });
     }
 
@@ -164,6 +233,7 @@ export function WishWordRoll() {
         }
       }
 
+      // Substeps keep the stiff letter springs stable (same as the reference).
       const sub = 4;
       for (let k = 0; k < sub; k++) {
         step(widthRef.current, dt / sub);
@@ -174,11 +244,7 @@ export function WishWordRoll() {
 
       slot.style.width = `${widthRef.current.x}px`;
       liveRef.current.forEach((w) =>
-        w.letters.forEach((l) => {
-          const y = l.s.x;
-          l.el.style.transform = `translateY(${y * 105}%)`;
-          l.el.style.opacity = String(clamp(1 - Math.abs(y) * 0.9, 0, 1));
-        }),
+        w.letters.forEach((l) => paintLetter(l.el, l.s.x)),
       );
 
       raf = requestAnimationFrame(loop);
@@ -204,7 +270,7 @@ export function WishWordRoll() {
         aria-labelledby={labelId}
         aria-label={`Change wish word. Currently: ${WORDS[0]}`}
       >
-        <span ref={slotRef} className="wish-roll-slot" aria-hidden="true" />
+        <WishRollSlot slotRef={slotRef} />
       </button>
       <span id={labelId} className="sr-only">
         {announcement}
