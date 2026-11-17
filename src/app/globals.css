@@ -654,7 +654,10 @@ button.calendar-cell:not(:disabled):hover {
 .dash-wish {
   /* Nudge the "Have a … day!" line a few pixels upward. */
   margin: calc(0.55rem - 6px) 0 calc(0.55rem + 6px);
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
   font-family: var(--font-display), Georgia, serif;
   font-size: clamp(2.35rem, 6.5vw, 3.85rem);
   font-weight: 700;
@@ -667,7 +670,8 @@ button.calendar-cell:not(:disabled):hover {
 
 /* Word Roll: vertical slot/reel (DesignBookmark) — not a horizontal slide */
 .wish-roll {
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;
   vertical-align: baseline;
   margin: 0;
   padding: 0;
@@ -693,7 +697,7 @@ button.calendar-cell:not(:disabled):hover {
 
 .wish-roll-slot {
   position: relative;
-  display: block;
+  display: inline-block;
   /* Same em as .dash-wish line-height: clips top/bottom of the reel only. */
   height: 1.25em;
   overflow: hidden;
@@ -701,6 +705,13 @@ button.calendar-cell:not(:disabled):hover {
   clip-path: inset(0 -1.25em);
   /* Reserve the line box so neighboring "Have a" / "day!" don't jump. */
   vertical-align: baseline;
+  line-height: inherit;
+}
+
+/* In-flow strut: overflow:hidden otherwise uses the bottom margin edge as
+   baseline, which lifts the absolute word above "Have a" / "day!". */
+.wish-roll-slot::before {
+  content: "\200b";
 }
 
 .wish-roll-word {
@@ -710,8 +721,14 @@ button.calendar-cell:not(:disabled):hover {
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  height: 1.25em;
+  height: 100%;
+  line-height: inherit;
   will-change: contents;
+}
+
+/* Match half-leading of the slot strut so resting letters share one baseline. */
+.wish-roll-word::before {
+  content: "\200b";
 }
 
 .wish-roll-ch {
