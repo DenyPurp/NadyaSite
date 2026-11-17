@@ -1,16 +1,23 @@
 # NadyaSite
 
-Next.js (App Router) + Prisma + PostgreSQL + Auth.js (NextAuth v5). Шаг 0.4: каркас Auth.
+Next.js (App Router) + Prisma + PostgreSQL + Auth.js (NextAuth v5). Обучающий сайт: вход по логину/паролю, роли учитель/ученик.
 
-## Getting Started
+## Быстрый старт
 
 ```bash
+git clone https://github.com/DenyPurp/NadyaSite.git
+cd NadyaSite
 cp .env.example .env
+# заполните DATABASE_URL и AUTH_SECRET в .env (см. ниже)
 npm install
+npx prisma migrate deploy
+npx prisma db seed
 npm run dev
 ```
 
 Откройте [http://localhost:3000](http://localhost:3000).
+
+Альтернативы: `npm run prisma:migrate` и `npm run prisma:seed`.
 
 ## Переменные окружения
 
@@ -19,19 +26,30 @@ npm run dev
 | Переменная | Назначение | Откуда взять |
 |---|---|---|
 | `DATABASE_URL` | Postgres connection string | Neon / локальный Postgres / другой хостинг. Формат: `postgresql://USER:PASSWORD@HOST:PORT/DB` |
-| `AUTH_SECRET` | Секрет сессий Auth.js | Сгенерировать: `openssl rand -base64 32` (или любой длинный случайный строковый секрет) |
+| `AUTH_SECRET` | Секрет сессий Auth.js | Сгенерировать: `openssl rand -base64 32` |
 | `AUTH_URL` | Базовый URL приложения | Для локали оставьте `http://localhost:3000` |
+
+Без `DATABASE_URL` можно установить зависимости и собрать проект (`npm install`, `npm run build`) — клиент Prisma генерируется без живой БД. `migrate deploy` и `db seed` нужны только когда Postgres доступен.
 
 ## Prisma / PostgreSQL
 
-Схема: `prisma/schema.prisma`. SQL миграции: `prisma/migrations/` (первая — `init`).
+- Схема: `prisma/schema.prisma`
+- Миграции: `prisma/migrations/`
+- Seed: `prisma/seed.ts` (`npx prisma db seed`)
+- Singleton клиента: `src/lib/prisma.ts`
 
-**Живой `DATABASE_URL` в этом шаге не обязателен.** Клиент генерируется при `npm install` / `npm run build`. Применить миграции к Postgres — когда появится URL:
+## Тестовые учётные записи (после seed)
 
-1. Заполните `DATABASE_URL` в локальном `.env`
-2. `npx prisma migrate deploy` (или `npm run prisma:migrate`)
+Только для локальной разработки. Не используйте в продакшене.
 
-Для локальной разработки с записью в БД также подойдёт `npx prisma migrate dev`.
+| Логин | Пароль | Роль |
+|---|---|---|
+| `teacher` | `teacher123` | TEACHER |
+| `student1` | `student123` | STUDENT |
+| `student2` | `student123` | STUDENT |
 
-Singleton клиента: `src/lib/prisma.ts`.
+Seed идемпотентен: повторный запуск обновляет тех же пользователей по `login`.
 
+## Auth.js
+
+Каркас Credentials (логин/пароль) в `src/auth.ts`, route `src/app/api/auth/[...nextauth]/route.ts`. Полноценный UI логина и админка — со следующих шагов.
