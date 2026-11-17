@@ -9,6 +9,9 @@ export const SEASON_COOKIE = "nadyasite-season-override";
 
 const SEASONS: readonly Season[] = ["spring", "summer", "autumn", "winter"];
 
+/** Three soft watercolor backgrounds per season under `/public/seasonal/`. */
+export const SEASONAL_BG_COUNT = 3;
+
 export function isSeason(value: string | undefined | null): value is Season {
   return Boolean(value && (SEASONS as readonly string[]).includes(value));
 }
@@ -25,6 +28,32 @@ export function seasonFromMonth(month: number): Season {
 export function currentSeason(now: Date): Season {
   const { month } = partsFromDayKey(moscowTodayKey(now));
   return seasonFromMonth(month);
+}
+
+/**
+ * Deterministic 0-based index into the season's 3 backgrounds.
+ * Stable for the whole Europe/Moscow calendar day (and season override).
+ */
+export function dailySeasonalBgIndex(
+  dayKey: string,
+  season: Season,
+): number {
+  let hash = 0;
+  const seed = `${dayKey}:${season}`;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return hash % SEASONAL_BG_COUNT;
+}
+
+/** Public URL for today's seasonal page background. */
+export function seasonalBackgroundUrl(
+  season: Season,
+  dayKey: string,
+): string {
+  const index = dailySeasonalBgIndex(dayKey, season) + 1;
+  const file = String(index).padStart(2, "0");
+  return `/seasonal/${season}/${file}.jpg`;
 }
 
 /**
