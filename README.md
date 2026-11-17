@@ -52,4 +52,11 @@ Seed идемпотентен: повторный запуск обновляе�
 
 ## Auth.js
 
-Каркас Credentials (логин/пароль) в `src/auth.ts`, route `src/app/api/auth/[...nextauth]/route.ts`. Полноценный UI логина и админка — со следующих шагов.
+Credentials (логин/пароль) в `src/auth.ts`, route `src/app/api/auth/[...nextauth]/route.ts`.
+
+- Страница входа: `/login` (без саморегистрации)
+- После входа: `/` — приветствие по `displayName`
+- Защита маршрутов: `src/proxy.ts` (Next.js 16; бывший middleware) + `src/auth.config.ts`
+- Выход: кнопка «Выйти» на главной
+
+Админка учителя — на следующих шагах (сейчас учитель видит то же приветствие).
