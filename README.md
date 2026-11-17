@@ -1,6 +1,6 @@
 # NadyaSite
 
-Next.js (App Router) + Prisma + PostgreSQL. Шаг 0.3: переменные окружения.
+Next.js (App Router) + Prisma + PostgreSQL + Auth.js (NextAuth v5). Шаг 0.4: каркас Auth.
 
 ## Getting Started
 
