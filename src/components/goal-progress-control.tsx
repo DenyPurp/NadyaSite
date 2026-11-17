@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   updateGoalProgressAction,
   type AdminActionState,
@@ -11,26 +11,38 @@ type GoalProgressControlProps = {
   initialProgress: number;
 };
 
-const initial: AdminActionState = {};
-
 export function GoalProgressControl({
   goalId,
   initialProgress,
 }: GoalProgressControlProps) {
   const [progress, setProgress] = useState(initialProgress);
-  const [state, formAction, pending] = useActionState(
-    updateGoalProgressAction,
-    initial,
-  );
+  const [pending, startTransition] = useTransition();
+  const [feedback, setFeedback] = useState<AdminActionState>({});
 
   useEffect(() => {
     setProgress(initialProgress);
   }, [initialProgress]);
 
+  function save() {
+    setFeedback({});
+    const formData = new FormData();
+    formData.set("id", goalId);
+    formData.set("progress", String(progress));
+    startTransition(async () => {
+      try {
+        const result = await updateGoalProgressAction({}, formData);
+        setFeedback(result);
+        if (result.ok && typeof result.message === "string") {
+          // keep local progress; server revalidate refreshes list meta
+        }
+      } catch {
+        setFeedback({ error: "Не удалось сохранить прогресс." });
+      }
+    });
+  }
+
   return (
-    <form action={formAction} className="goal-progress-control">
-      <input type="hidden" name="id" value={goalId} />
-      <input type="hidden" name="progress" value={progress} />
+    <div className="goal-progress-control">
       <div className="goal-head">
         <span className="goal-pct">{progress}%</span>
       </div>
@@ -56,20 +68,25 @@ export function GoalProgressControl({
           aria-label="Установить прогресс"
           disabled={pending}
         />
-        <button type="submit" className="admin-submit" disabled={pending}>
+        <button
+          type="button"
+          className="admin-submit"
+          disabled={pending}
+          onClick={save}
+        >
           {pending ? "…" : "Сохранить"}
         </button>
       </div>
-      {state.error ? (
+      {feedback.error ? (
         <p className="form-error" role="alert">
-          {state.error}
+          {feedback.error}
         </p>
       ) : null}
-      {state.message ? (
+      {feedback.message ? (
         <p className="admin-ok" role="status">
-          {state.message}
+          {feedback.message}
         </p>
       ) : null}
-    </form>
+    </div>
   );
 }

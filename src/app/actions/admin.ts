@@ -269,8 +269,9 @@ export async function updateGoalProgressAction(
     data: { progress },
   });
 
-  revalidatePath("/admin");
+  // Revalidate student home for progress bars; admin list refreshes on next visit/navigation.
   revalidatePath("/");
+  revalidatePath("/admin");
   return { ok: true, message: "Прогресс обновлён." };
 }
 
