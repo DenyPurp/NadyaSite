@@ -1,72 +1,88 @@
 @import "tailwindcss";
 
-/* Autumn (Sep–Nov) is the default moss study baseline. */
+/*
+  Cozy English palette (exact):
+  Dark Green #0A3323 · Moss Green #839958 · Beige #F7F4D5 ·
+  Rosy Brown #D3968C · Midnight Green #105666
+  Season variants only tint these five — no new hues.
+*/
+
 :root,
 .season-shell,
 .season-shell[data-season="autumn"] {
-  --fog: #dde8e2;
-  --paper: #f2f7f4;
-  --ink: #1c2e27;
-  --moss: #3e6b54;
-  --moss-deep: #2d5240;
-  --vine: #a8c0b2;
-  --alert: #8b3a3a;
-  --decor: color-mix(in srgb, var(--moss) 42%, var(--vine));
-  --wash-top: #cfdfd6;
-  --wash-bottom: #e8f1ec;
-  --glow-a: color-mix(in srgb, var(--vine) 55%, white);
-  --glow-b: color-mix(in srgb, var(--moss) 18%, var(--fog));
+  --dark-green: #0a3323;
+  --moss-green: #839958;
+  --beige: #f7f4d5;
+  --rosy-brown: #d3968c;
+  --midnight-green: #105666;
+
+  --ink: var(--dark-green);
+  --moss: var(--moss-green);
+  --moss-deep: var(--dark-green);
+  --paper: var(--beige);
+  --fog: color-mix(in srgb, var(--beige) 88%, var(--moss-green));
+  --vine: color-mix(in srgb, var(--moss-green) 45%, var(--beige));
+  --alert: var(--rosy-brown);
+  --accent: var(--midnight-green);
+  --decor: color-mix(in srgb, var(--moss-green) 55%, var(--rosy-brown));
+  --wash-top: color-mix(in srgb, var(--beige) 72%, var(--moss-green));
+  --wash-bottom: color-mix(in srgb, var(--beige) 92%, var(--midnight-green));
+  --glow-a: color-mix(in srgb, var(--beige) 70%, white);
+  --glow-b: color-mix(in srgb, var(--moss-green) 22%, var(--beige));
   --background: var(--fog);
   --foreground: var(--ink);
 }
 
 .season-shell[data-season="spring"] {
-  --fog: #e0ede6;
-  --paper: #f4faf6;
-  --ink: #1b3328;
-  --moss: #3f7a58;
-  --moss-deep: #2e5c42;
-  --vine: #a9cdb8;
-  --alert: #8b3a3a;
-  --decor: color-mix(in srgb, #c9899a 55%, var(--moss));
-  --wash-top: #d2e8db;
-  --wash-bottom: #eef6f1;
-  --glow-a: color-mix(in srgb, #d8b8c2 45%, white);
-  --glow-b: color-mix(in srgb, var(--moss) 16%, var(--fog));
+  --ink: var(--dark-green);
+  --moss: color-mix(in srgb, var(--moss-green) 78%, var(--rosy-brown));
+  --moss-deep: color-mix(in srgb, var(--dark-green) 82%, var(--rosy-brown));
+  --paper: var(--beige);
+  --fog: color-mix(in srgb, var(--beige) 86%, var(--rosy-brown));
+  --vine: color-mix(in srgb, var(--rosy-brown) 40%, var(--beige));
+  --alert: var(--rosy-brown);
+  --accent: var(--midnight-green);
+  --decor: color-mix(in srgb, var(--rosy-brown) 65%, var(--moss-green));
+  --wash-top: color-mix(in srgb, var(--beige) 78%, var(--rosy-brown));
+  --wash-bottom: color-mix(in srgb, var(--beige) 90%, var(--moss-green));
+  --glow-a: color-mix(in srgb, var(--rosy-brown) 28%, white);
+  --glow-b: color-mix(in srgb, var(--moss-green) 18%, var(--beige));
   --background: var(--fog);
   --foreground: var(--ink);
 }
 
 .season-shell[data-season="summer"] {
-  --fog: #d9e8e9;
-  --paper: #f0f7f6;
-  --ink: #1a3030;
-  --moss: #2f6b6a;
-  --moss-deep: #245453;
-  --vine: #9fbfbf;
-  --alert: #8b3a3a;
-  --decor: color-mix(in srgb, var(--moss) 50%, #7aa8a0);
-  --wash-top: #c9dde0;
-  --wash-bottom: #e8f2f2;
-  --glow-a: color-mix(in srgb, #b7d4d6 60%, white);
-  --glow-b: color-mix(in srgb, var(--moss) 14%, var(--fog));
+  --ink: color-mix(in srgb, var(--dark-green) 70%, var(--midnight-green));
+  --moss: color-mix(in srgb, var(--moss-green) 55%, var(--midnight-green));
+  --moss-deep: var(--midnight-green);
+  --paper: var(--beige);
+  --fog: color-mix(in srgb, var(--beige) 82%, var(--midnight-green));
+  --vine: color-mix(in srgb, var(--midnight-green) 35%, var(--beige));
+  --alert: var(--rosy-brown);
+  --accent: var(--midnight-green);
+  --decor: color-mix(in srgb, var(--midnight-green) 60%, var(--moss-green));
+  --wash-top: color-mix(in srgb, var(--beige) 70%, var(--midnight-green));
+  --wash-bottom: color-mix(in srgb, var(--beige) 88%, var(--moss-green));
+  --glow-a: color-mix(in srgb, var(--midnight-green) 18%, white);
+  --glow-b: color-mix(in srgb, var(--moss-green) 16%, var(--beige));
   --background: var(--fog);
   --foreground: var(--ink);
 }
 
 .season-shell[data-season="winter"] {
-  --fog: #dce4ec;
-  --paper: #f3f6f9;
-  --ink: #1a2834;
-  --moss: #3d5a6c;
-  --moss-deep: #2e4554;
-  --vine: #a8b6c4;
-  --alert: #8b3a3a;
-  --decor: color-mix(in srgb, var(--moss) 35%, white);
-  --wash-top: #cdd8e4;
-  --wash-bottom: #ebf0f5;
-  --glow-a: color-mix(in srgb, #c5d2df 65%, white);
-  --glow-b: color-mix(in srgb, var(--moss) 12%, var(--fog));
+  --ink: color-mix(in srgb, var(--dark-green) 55%, var(--midnight-green));
+  --moss: color-mix(in srgb, var(--midnight-green) 72%, var(--moss-green));
+  --moss-deep: var(--midnight-green);
+  --paper: color-mix(in srgb, var(--beige) 94%, var(--midnight-green));
+  --fog: color-mix(in srgb, var(--beige) 78%, var(--midnight-green));
+  --vine: color-mix(in srgb, var(--midnight-green) 28%, var(--beige));
+  --alert: var(--rosy-brown);
+  --accent: var(--midnight-green);
+  --decor: color-mix(in srgb, var(--midnight-green) 45%, var(--beige));
+  --wash-top: color-mix(in srgb, var(--beige) 68%, var(--midnight-green));
+  --wash-bottom: color-mix(in srgb, var(--beige) 90%, var(--dark-green));
+  --glow-a: color-mix(in srgb, var(--beige) 82%, white);
+  --glow-b: color-mix(in srgb, var(--midnight-green) 14%, var(--beige));
   --background: var(--fog);
   --foreground: var(--ink);
 }
@@ -110,7 +126,7 @@ body {
 }
 
 a {
-  color: var(--moss);
+  color: var(--accent);
 }
 
 :focus-visible {
@@ -127,86 +143,6 @@ a {
   letter-spacing: -0.02em;
   color: var(--ink);
   max-width: 14ch;
-}
-
-/* ——— Seasonal stage + decor ——— */
-
-.seasonal-stage {
-  position: relative;
-  isolation: isolate;
-}
-
-.seasonal-decor {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.seasonal-motif {
-  position: absolute;
-  display: block;
-  width: clamp(1.55rem, 3.2vw, 2.35rem);
-  height: clamp(1.55rem, 3.2vw, 2.35rem);
-  color: var(--decor);
-  opacity: 0.38;
-}
-
-.seasonal-motif svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.seasonal-motif--tl {
-  top: 8%;
-  left: 6%;
-}
-
-.seasonal-motif--tr {
-  top: 12%;
-  right: 7%;
-}
-
-.seasonal-motif--bl {
-  bottom: 10%;
-  left: 8%;
-}
-
-.seasonal-motif--br {
-  bottom: 14%;
-  right: 6%;
-}
-
-.seasonal-motif--ml {
-  top: 46%;
-  left: 4%;
-}
-
-.seasonal-motif--mr {
-  top: 42%;
-  right: 5%;
-}
-
-.seasonal-motif--drift-a {
-  animation: motif-drift-a 9s ease-in-out infinite;
-}
-
-.seasonal-motif--drift-b {
-  animation: motif-drift-b 11s ease-in-out infinite;
-}
-
-.seasonal-motif--drift-c {
-  animation: motif-drift-c 10s ease-in-out infinite;
-}
-
-.login-composition,
-.home-center,
-.home-bar,
-.home-hero {
-  position: relative;
-  z-index: 1;
 }
 
 /* ——— Login ——— */
@@ -293,13 +229,13 @@ a {
 .login-submit {
   margin-top: 0.35rem;
   padding: 0.85rem 1.25rem;
-  background: var(--moss);
-  color: #f5faf7;
+  background: var(--dark-green);
+  color: var(--beige);
   font-size: 1.05rem;
 }
 
 .login-submit:hover:not(:disabled) {
-  background: var(--moss-deep);
+  background: var(--midnight-green);
 }
 
 .login-submit:active:not(:disabled) {
@@ -411,6 +347,25 @@ a {
   gap: 1rem;
 }
 
+.calendar--with-side {
+  width: 100%;
+  max-width: none;
+}
+
+.calendar-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(0.85rem, 2vw, 1.35rem);
+  align-items: start;
+}
+
+.calendar-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
 .calendar--compact {
   width: 100%;
   gap: 0.65rem;
@@ -440,8 +395,10 @@ a {
 }
 
 .calendar--compact .lesson-panel {
-  min-height: 3.5rem;
-  padding-top: 0.65rem;
+  min-height: 8rem;
+  padding: 0.85rem 0.9rem;
+  border-top: none;
+  border-left: 1.5px solid color-mix(in srgb, var(--vine) 70%, transparent);
 }
 
 .calendar--compact .lesson-topic {
@@ -570,7 +527,7 @@ button.calendar-cell:not(:disabled):hover {
 }
 
 .calendar-cell--selected {
-  background: color-mix(in srgb, var(--moss) 16%, var(--paper));
+  background: color-mix(in srgb, var(--moss) 22%, var(--paper));
   border-color: var(--moss);
 }
 
@@ -592,8 +549,10 @@ button.calendar-cell:not(:disabled):hover {
 
 .lesson-panel {
   min-height: 6.5rem;
-  padding: 1rem 0 0;
-  border-top: 1.5px solid color-mix(in srgb, var(--vine) 70%, transparent);
+  padding: 0.85rem 1rem;
+  border-left: 1.5px solid color-mix(in srgb, var(--vine) 70%, transparent);
+  background: color-mix(in srgb, var(--paper) 55%, transparent);
+  border-radius: 0 0.35rem 0.35rem 0;
 }
 
 .lesson-panel--open {
@@ -612,7 +571,7 @@ button.calendar-cell:not(:disabled):hover {
   font-size: 0.98rem;
   line-height: 1.45;
   color: color-mix(in srgb, var(--ink) 58%, transparent);
-  max-width: 36ch;
+  max-width: 28ch;
 }
 
 .lesson-entry + .lesson-entry {
@@ -664,7 +623,7 @@ button.calendar-cell:not(:disabled):hover {
 .dash-top,
 .dash-bottom {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr);
   gap: clamp(1rem, 2.5vw, 1.75rem);
   align-items: start;
 }
@@ -775,11 +734,39 @@ button.calendar-cell:not(:disabled):hover {
   border-radius: inherit;
   background: linear-gradient(
     90deg,
-    var(--moss) 0%,
-    color-mix(in srgb, var(--moss) 70%, var(--moss-deep)) 100%
+    var(--moss-green) 0%,
+    var(--midnight-green) 100%
   );
   transform-origin: left center;
   animation: bar-grow 0.7s ease-out both;
+  transition: width 0.35s ease;
+}
+
+.goal-progress-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.goal-progress-control .goal-bar {
+  height: 0.55rem;
+}
+
+.goal-slider {
+  width: 100%;
+  accent-color: var(--moss-green);
+  cursor: pointer;
+}
+
+.goal-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.goal-slider-row .admin-submit {
+  flex-shrink: 0;
 }
 
 .dash-reserve {
@@ -936,17 +923,30 @@ button.calendar-cell:not(:disabled):hover {
   border: none;
   border-radius: 0.35rem;
   padding: 0.65rem 1rem;
-  background: var(--moss);
-  color: #f5faf7;
+  background: var(--dark-green);
+  color: var(--beige);
 }
 
 .admin-submit:hover:not(:disabled) {
-  background: var(--moss-deep);
+  background: var(--midnight-green);
 }
 
 .admin-submit:disabled {
   opacity: 0.75;
   cursor: wait;
+}
+
+.admin-submit--danger {
+  background: transparent;
+  color: var(--alert);
+  border: 1.5px solid color-mix(in srgb, var(--alert) 70%, var(--ink));
+  padding: 0.45rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.admin-submit--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--alert) 18%, var(--paper));
+  color: var(--ink);
 }
 
 .admin-ok {
@@ -990,6 +990,66 @@ button.calendar-cell:not(:disabled):hover {
   font-size: 0.88rem;
   font-weight: 500;
   color: color-mix(in srgb, var(--ink) 58%, transparent);
+}
+
+.admin-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ——— File dropzone ——— */
+
+.file-dropzone {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.95rem 1rem;
+  border: 1.5px dashed color-mix(in srgb, var(--vine) 85%, var(--ink));
+  border-radius: 0.4rem;
+  background: color-mix(in srgb, var(--paper) 70%, transparent);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.file-dropzone:hover,
+.file-dropzone--active {
+  border-color: var(--moss);
+  border-style: solid;
+  background: color-mix(in srgb, var(--moss-green) 12%, var(--paper));
+}
+
+.file-dropzone-label {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.file-dropzone-hint {
+  margin: 0;
+  font-size: 0.88rem;
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
+}
+
+.file-dropzone-name {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: var(--midnight-green);
+  word-break: break-all;
+}
+
+.file-dropzone input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 @keyframes wish-soft {
@@ -1039,47 +1099,11 @@ button.calendar-cell:not(:disabled):hover {
 @keyframes detail-open {
   from {
     opacity: 0;
-    transform: translateY(0.4rem);
+    transform: translateX(0.4rem);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes motif-drift-a {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.34;
-  }
-  50% {
-    transform: translateY(-0.45rem) rotate(4deg);
-    opacity: 0.48;
-  }
-}
-
-@keyframes motif-drift-b {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.32;
-  }
-  50% {
-    transform: translateY(0.4rem) rotate(-5deg);
-    opacity: 0.46;
-  }
-}
-
-@keyframes motif-drift-c {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(-2deg);
-    opacity: 0.3;
-  }
-  50% {
-    transform: translate3d(0.25rem, -0.35rem, 0) rotate(3deg);
-    opacity: 0.44;
+    transform: translateX(0);
   }
 }
 
@@ -1091,11 +1115,12 @@ button.calendar-cell:not(:disabled):hover {
   .dash-wish,
   .goal-bar-fill,
   .calendar-grid--motion,
-  .lesson-panel--open,
-  .seasonal-motif--drift-a,
-  .seasonal-motif--drift-b,
-  .seasonal-motif--drift-c {
+  .lesson-panel--open {
     animation: none;
+  }
+
+  .goal-bar-fill {
+    transition: none;
   }
 
   .login-submit:active:not(:disabled) {
@@ -1106,8 +1131,31 @@ button.calendar-cell:not(:disabled):hover {
 @media (max-width: 860px) {
   .dash-top,
   .dash-bottom,
-  .admin-grid {
+  .admin-grid,
+  .calendar-layout {
     grid-template-columns: 1fr;
+  }
+
+  .lesson-panel,
+  .calendar--compact .lesson-panel {
+    border-left: none;
+    border-top: 1.5px solid color-mix(in srgb, var(--vine) 70%, transparent);
+    border-radius: 0 0 0.35rem 0.35rem;
+  }
+
+  .lesson-panel--open {
+    animation-name: detail-open-stack;
+  }
+}
+
+@keyframes detail-open-stack {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -1128,15 +1176,6 @@ button.calendar-cell:not(:disabled):hover {
   .calendar-nav-btn {
     width: 2.35rem;
     height: 2.35rem;
-  }
-
-  .seasonal-motif--ml,
-  .seasonal-motif--mr {
-    display: none;
-  }
-
-  .seasonal-motif {
-    opacity: 0.28;
   }
 
   .home-bar--dash {

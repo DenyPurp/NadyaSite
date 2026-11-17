@@ -97,7 +97,6 @@ export function StudentCalendar({
       setSelectedKey(null);
       return;
     }
-    // Plan: past (and today) lesson days open the detail panel.
     if (dayKey > todayKey) {
       setSelectedKey(null);
       return;
@@ -107,7 +106,7 @@ export function StudentCalendar({
 
   return (
     <section
-      className={`calendar${compact ? " calendar--compact" : ""}`}
+      className={`calendar calendar--with-side${compact ? " calendar--compact" : ""}`}
       aria-labelledby={titleId}
     >
       <div className="calendar-head">
@@ -123,103 +122,118 @@ export function StudentCalendar({
         )}
       </div>
 
-      <div className="calendar-nav">
-        <button
-          type="button"
-          className="calendar-nav-btn"
-          onClick={() => goMonth(-1)}
-          aria-label="Предыдущий месяц"
-        >
-          ‹
-        </button>
-        <p className="calendar-month" aria-live="polite">
-          {formatMonthTitle(cursor.year, cursor.month)}
-        </p>
-        <button
-          type="button"
-          className="calendar-nav-btn"
-          onClick={() => goMonth(1)}
-          disabled={!canGoForward}
-          aria-label="Следующий месяц"
-        >
-          ›
-        </button>
-      </div>
-
-      <div
-        key={`${cursor.year}-${cursor.month}-${motionNonce}`}
-        className="calendar-grid calendar-grid--motion"
-        role="grid"
-        aria-label={formatMonthTitle(cursor.year, cursor.month)}
-      >
-        {WEEKDAYS.map((label) => (
-          <div key={label} className="calendar-weekday" role="columnheader">
-            {label}
-          </div>
-        ))}
-        {cells.map((dayKey, index) => {
-          if (!dayKey) {
-            return <div key={`empty-${index}`} className="calendar-cell calendar-cell--empty" />;
-          }
-          const hasLesson = (lessonsByDay.get(dayKey)?.length ?? 0) > 0;
-          const isToday = dayKey === todayKey;
-          const isSelected = dayKey === selectedKey;
-          const isFuture = dayKey > todayKey;
-          const clickable = hasLesson && !isFuture;
-
-          return (
+      <div className="calendar-layout">
+        <div className="calendar-main">
+          <div className="calendar-nav">
             <button
-              key={dayKey}
               type="button"
-              role="gridcell"
-              className={[
-                "calendar-cell",
-                isToday ? "calendar-cell--today" : "",
-                hasLesson ? "calendar-cell--lesson" : "",
-                isSelected ? "calendar-cell--selected" : "",
-                isFuture ? "calendar-cell--future" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              onClick={() => selectDay(dayKey)}
-              disabled={!clickable}
-              aria-current={isSelected ? "date" : undefined}
-              aria-label={
-                hasLesson
-                  ? `${formatLongDay(dayKey)}, есть занятие`
-                  : formatLongDay(dayKey)
-              }
+              className="calendar-nav-btn"
+              onClick={() => goMonth(-1)}
+              aria-label="Предыдущий месяц"
             >
-              <span className="calendar-day-num">{partsFromDayKey(dayKey).day}</span>
-              {hasLesson ? <span className="calendar-dot" aria-hidden="true" /> : null}
+              ‹
             </button>
-          );
-        })}
-      </div>
+            <p className="calendar-month" aria-live="polite">
+              {formatMonthTitle(cursor.year, cursor.month)}
+            </p>
+            <button
+              type="button"
+              className="calendar-nav-btn"
+              onClick={() => goMonth(1)}
+              disabled={!canGoForward}
+              aria-label="Следующий месяц"
+            >
+              ›
+            </button>
+          </div>
 
-      <div
-        className={`lesson-panel${selectedLessons.length ? " lesson-panel--open" : ""}`}
-        aria-live="polite"
-      >
-        {selectedLessons.length && selectedKey ? (
-          <>
-            <p className="lesson-panel-date">{formatLongDay(selectedKey)}</p>
-            {selectedLessons.map((lesson) => (
-              <article key={lesson.id} className="lesson-entry">
-                <h3 className="lesson-topic">{lesson.topic}</h3>
-                {lesson.notes ? (
-                  <p className="lesson-notes">{lesson.notes}</p>
-                ) : (
-                  <p className="lesson-notes lesson-notes--empty">Конспект пока не добавлен.</p>
-                )}
-              </article>
+          <div
+            key={`${cursor.year}-${cursor.month}-${motionNonce}`}
+            className="calendar-grid calendar-grid--motion"
+            role="grid"
+            aria-label={formatMonthTitle(cursor.year, cursor.month)}
+          >
+            {WEEKDAYS.map((label) => (
+              <div key={label} className="calendar-weekday" role="columnheader">
+                {label}
+              </div>
             ))}
-          </>
-        ) : (
-          <p className="lesson-panel-hint">
-            Нажмите день с точкой, чтобы открыть тему и конспект урока.
-          </p>
-        )}
+            {cells.map((dayKey, index) => {
+              if (!dayKey) {
+                return (
+                  <div
+                    key={`empty-${index}`}
+                    className="calendar-cell calendar-cell--empty"
+                  />
+                );
+              }
+              const hasLesson = (lessonsByDay.get(dayKey)?.length ?? 0) > 0;
+              const isToday = dayKey === todayKey;
+              const isSelected = dayKey === selectedKey;
+              const isFuture = dayKey > todayKey;
+              const clickable = hasLesson && !isFuture;
+
+              return (
+                <button
+                  key={dayKey}
+                  type="button"
+                  role="gridcell"
+                  className={[
+                    "calendar-cell",
+                    isToday ? "calendar-cell--today" : "",
+                    hasLesson ? "calendar-cell--lesson" : "",
+                    isSelected ? "calendar-cell--selected" : "",
+                    isFuture ? "calendar-cell--future" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  onClick={() => selectDay(dayKey)}
+                  disabled={!clickable}
+                  aria-current={isSelected ? "date" : undefined}
+                  aria-label={
+                    hasLesson
+                      ? `${formatLongDay(dayKey)}, есть занятие`
+                      : formatLongDay(dayKey)
+                  }
+                >
+                  <span className="calendar-day-num">
+                    {partsFromDayKey(dayKey).day}
+                  </span>
+                  {hasLesson ? (
+                    <span className="calendar-dot" aria-hidden="true" />
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div
+          className={`lesson-panel${selectedLessons.length ? " lesson-panel--open" : ""}`}
+          aria-live="polite"
+        >
+          {selectedLessons.length && selectedKey ? (
+            <>
+              <p className="lesson-panel-date">{formatLongDay(selectedKey)}</p>
+              {selectedLessons.map((lesson) => (
+                <article key={lesson.id} className="lesson-entry">
+                  <h3 className="lesson-topic">{lesson.topic}</h3>
+                  {lesson.notes ? (
+                    <p className="lesson-notes">{lesson.notes}</p>
+                  ) : (
+                    <p className="lesson-notes lesson-notes--empty">
+                      Конспект пока не добавлен.
+                    </p>
+                  )}
+                </article>
+              ))}
+            </>
+          ) : (
+            <p className="lesson-panel-hint">
+              Нажмите день с точкой, чтобы открыть тему и конспект урока.
+            </p>
+          )}
+        </div>
       </div>
     </section>
   );

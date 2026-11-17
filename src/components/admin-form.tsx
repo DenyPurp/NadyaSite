@@ -8,9 +8,11 @@ type AdminFormProps = {
     prev: AdminActionState,
     formData: FormData,
   ) => Promise<AdminActionState>;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   submitLabel: string;
+  danger?: boolean;
+  confirmMessage?: string;
 };
 
 const initial: AdminActionState = {};
@@ -20,11 +22,21 @@ export function AdminForm({
   children,
   className,
   submitLabel,
+  danger = false,
+  confirmMessage,
 }: AdminFormProps) {
   const [state, formAction, pending] = useActionState(action, initial);
 
   return (
-    <form action={formAction} className={className ?? "admin-form"}>
+    <form
+      action={formAction}
+      className={className ?? "admin-form"}
+      onSubmit={(e) => {
+        if (confirmMessage && !window.confirm(confirmMessage)) {
+          e.preventDefault();
+        }
+      }}
+    >
       {children}
       {state.error ? (
         <p className="form-error" role="alert">
@@ -36,7 +48,11 @@ export function AdminForm({
           {state.message}
         </p>
       ) : null}
-      <button type="submit" className="admin-submit" disabled={pending}>
+      <button
+        type="submit"
+        className={danger ? "admin-submit admin-submit--danger" : "admin-submit"}
+        disabled={pending}
+      >
         {pending ? "Сохраняем…" : submitLabel}
       </button>
     </form>

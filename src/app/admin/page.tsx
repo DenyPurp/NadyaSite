@@ -6,14 +6,16 @@ import {
   createGoalAction,
   createHomeworkAction,
   createMaterialAction,
+  deleteCourseAction,
   deleteGoalAction,
   deleteHomeworkAction,
   deleteMaterialAction,
   updateCourseAction,
-  updateGoalProgressAction,
 } from "@/app/actions/admin";
 import { auth } from "@/auth";
 import { AdminForm } from "@/components/admin-form";
+import { FileDropzone } from "@/components/file-dropzone";
+import { GoalProgressControl } from "@/components/goal-progress-control";
 import { LogoutButton } from "@/components/logout-button";
 import { lessonDateKey } from "@/lib/moscow-time";
 import { prisma } from "@/lib/prisma";
@@ -107,6 +109,17 @@ async function AdminBody() {
                     />
                   </div>
                 </AdminForm>
+                <div className="admin-item-actions">
+                  <AdminForm
+                    action={deleteCourseAction}
+                    submitLabel="Удалить курс"
+                    danger
+                    confirmMessage={`Удалить курс «${course.title}»? Связанные материалы и уроки тоже удалятся.`}
+                    className="admin-form admin-form--row"
+                  >
+                    <input type="hidden" name="id" value={course.id} />
+                  </AdminForm>
+                </div>
               </li>
             ))}
           </ul>
@@ -139,16 +152,17 @@ async function AdminBody() {
               <select id="mat-type" name="type" defaultValue="TEXT">
                 <option value="TEXT">Текст</option>
                 <option value="LINK">Ссылка</option>
-                <option value="FILE">Файл (URL)</option>
+                <option value="FILE">Файл</option>
               </select>
             </div>
             <div className="field">
               <label htmlFor="mat-content">Содержание</label>
               <textarea id="mat-content" name="content" rows={3} />
             </div>
+            <FileDropzone label="Файл материала (перетащите или выберите)" />
             <div className="field">
-              <label htmlFor="mat-url">URL файла / ссылки</label>
-              <input id="mat-url" name="fileUrl" type="url" />
+              <label htmlFor="mat-url">Или URL файла / ссылки</label>
+              <input id="mat-url" name="linkUrl" type="url" />
             </div>
           </AdminForm>
 
@@ -165,9 +179,19 @@ async function AdminBody() {
                 {mat.content ? (
                   <p className="admin-item-body">{mat.content}</p>
                 ) : null}
+                {mat.fileUrl ? (
+                  <p className="admin-meta">
+                    Файл:{" "}
+                    <a href={mat.fileUrl} target="_blank" rel="noreferrer">
+                      {mat.fileUrl.split("/").pop()}
+                    </a>
+                  </p>
+                ) : null}
                 <AdminForm
                   action={deleteMaterialAction}
                   submitLabel="Удалить"
+                  danger
+                  confirmMessage={`Удалить материал «${mat.title}»?`}
                   className="admin-form admin-form--row"
                 >
                   <input type="hidden" name="id" value={mat.id} />
@@ -211,6 +235,10 @@ async function AdminBody() {
               <label htmlFor="hw-desc">Комментарий</label>
               <textarea id="hw-desc" name="description" rows={2} />
             </div>
+            <FileDropzone
+              label="Файл к заданию (необязательно)"
+              name="hwFile"
+            />
           </AdminForm>
 
           <ul className="admin-list">
@@ -222,9 +250,14 @@ async function AdminBody() {
                 <p className="admin-meta">
                   {hw.student.displayName} ({hw.student.login})
                 </p>
+                {hw.description ? (
+                  <p className="admin-item-body">{hw.description}</p>
+                ) : null}
                 <AdminForm
                   action={deleteHomeworkAction}
-                  submitLabel="Удалить"
+                  submitLabel="Удалить ДЗ"
+                  danger
+                  confirmMessage={`Удалить задание «${hw.title}»?`}
                   className="admin-form admin-form--row"
                 >
                   <input type="hidden" name="id" value={hw.id} />
@@ -276,28 +309,15 @@ async function AdminBody() {
                 <p className="admin-meta">
                   {goal.student.displayName} · сейчас {goal.progress}%
                 </p>
-                <AdminForm
-                  action={updateGoalProgressAction}
-                  submitLabel="Обновить %"
-                  className="admin-form admin-form--row"
-                >
-                  <input type="hidden" name="id" value={goal.id} />
-                  <div className="field field--inline">
-                    <label htmlFor={`gp-${goal.id}`}>%</label>
-                    <input
-                      id={`gp-${goal.id}`}
-                      name="progress"
-                      type="number"
-                      min={0}
-                      max={100}
-                      defaultValue={goal.progress}
-                      required
-                    />
-                  </div>
-                </AdminForm>
+                <GoalProgressControl
+                  goalId={goal.id}
+                  initialProgress={goal.progress}
+                />
                 <AdminForm
                   action={deleteGoalAction}
                   submitLabel="Удалить цель"
+                  danger
+                  confirmMessage={`Удалить цель «${goal.title}»?`}
                   className="admin-form admin-form--row"
                 >
                   <input type="hidden" name="id" value={goal.id} />
