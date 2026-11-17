@@ -652,7 +652,8 @@ button.calendar-cell:not(:disabled):hover {
 }
 
 .dash-wish {
-  margin: 0.55rem 0;
+  /* Nudge the "Have a … day!" line a few pixels upward. */
+  margin: calc(0.55rem - 6px) 0 calc(0.55rem + 6px);
   text-align: center;
   font-family: var(--font-display), Georgia, serif;
   font-size: clamp(2.35rem, 6.5vw, 3.85rem);
