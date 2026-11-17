@@ -16,6 +16,8 @@ type StudentCalendarProps = {
   lessons: StudentLessonDTO[];
   /** Initial “today” from the server (Europe/Moscow) to avoid hydration drift. */
   todayKey: string;
+  /** Compact mode for student dashboard top-left slot. */
+  compact?: boolean;
 };
 
 type MonthCursor = { year: number; month: number };
@@ -54,7 +56,11 @@ function buildCells(year: number, month: number): (string | null)[] {
   return cells;
 }
 
-export function StudentCalendar({ lessons, todayKey }: StudentCalendarProps) {
+export function StudentCalendar({
+  lessons,
+  todayKey,
+  compact = false,
+}: StudentCalendarProps) {
   const titleId = useId();
   const currentMonth = useMemo(() => monthFromDayKey(todayKey), [todayKey]);
   const [cursor, setCursor] = useState<MonthCursor>(currentMonth);
@@ -100,14 +106,21 @@ export function StudentCalendar({ lessons, todayKey }: StudentCalendarProps) {
   }
 
   return (
-    <section className="calendar" aria-labelledby={titleId}>
+    <section
+      className={`calendar${compact ? " calendar--compact" : ""}`}
+      aria-labelledby={titleId}
+    >
       <div className="calendar-head">
         <h2 id={titleId} className="calendar-title">
-          Календарь занятий
+          Календарь
         </h2>
-        <p className="calendar-today">
-          Сегодня · {formatLongDay(todayKey)}
-        </p>
+        {!compact ? (
+          <p className="calendar-today">Сегодня · {formatLongDay(todayKey)}</p>
+        ) : (
+          <p className="calendar-today calendar-today--short">
+            {formatLongDay(todayKey)}
+          </p>
+        )}
       </div>
 
       <div className="calendar-nav">

@@ -39,6 +39,8 @@ model User {
   enrollments      Enrollment[]
   lessons          Lesson[]          @relation("StudentLessons")
   assignmentIssues AssignmentIssue[]
+  homeworks        Homework[]
+  goals            Goal[]
 }
 
 model Course {
@@ -149,4 +151,33 @@ model AssignmentItem {
 
   @@index([issueId])
   @@index([templateId])
+}
+
+/// Домашнее задание ученика, привязанное к дате (не путать с выдачей 10/20)
+model Homework {
+  id          String   @id @default(cuid())
+  studentId   String
+  date        DateTime @db.Date
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, date])
+}
+
+/// Учебная цель ученика с прогрессом 0–100
+model Goal {
+  id        String   @id @default(cuid())
+  studentId String
+  title     String
+  progress  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
 }
