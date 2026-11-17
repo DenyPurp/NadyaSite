@@ -673,7 +673,8 @@ button.calendar-cell:not(:disabled):hover {
   display: inline-flex;
   align-items: baseline;
   vertical-align: baseline;
-  margin: 0;
+  /* Breathing room vs «Have a» / «day!» — keep vertical margin 0 for baseline. */
+  margin: 0 0.32em;
   padding: 0;
   border: none;
   background: transparent;
