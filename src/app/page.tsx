@@ -1,75 +1,110 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
+import { cookies } from "next/headers";
 import { auth } from "@/auth";
+import { AssignmentReserve } from "@/components/assignment-reserve";
+import { GoalsList } from "@/components/goals-list";
+import { HomeworkList } from "@/components/homework-list";
 import { LogoutButton } from "@/components/logout-button";
-import { SeasonalDecor } from "@/components/seasonal-decor";
+import { SeasonSwitcher } from "@/components/season-switcher";
 import { StudentCalendar } from "@/components/student-calendar";
+import { getStudentGoals, getStudentHomework } from "@/lib/dashboard";
 import { getStudentLessons } from "@/lib/lessons";
 import { moscowTodayKey } from "@/lib/moscow-time";
-import { getCurrentSeason } from "@/lib/season";
+import {
+  getCurrentSeason,
+  getNaturalSeason,
+  SEASON_COOKIE,
+  isSeason,
+} from "@/lib/season";
 
 async function StudentHome() {
   const session = await auth();
   const displayName = session?.user?.displayName ?? "друг";
   const isTeacher = session?.user?.role === Role.TEACHER;
-  const todayKey = moscowTodayKey();
 
-  if (isTeacher || !session?.user?.id) {
-    return (
-      <div className="home-center">
-        <section className="home-hero">
-          <p className="brand">Cozy English with Nadya</p>
-          <h1 className="greeting">Здравствуй, {displayName}</h1>
-          <p className="home-support">
-            Кабинет учителя появится здесь позже. Пока это общий вход.
-          </p>
-        </section>
-      </div>
-    );
+  if (isTeacher) {
+    redirect("/admin");
   }
 
-  const lessons = await getStudentLessons(session.user.id);
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const todayKey = moscowTodayKey();
+  const [lessons, homework, goals] = await Promise.all([
+    getStudentLessons(session.user.id),
+    getStudentHomework(session.user.id),
+    getStudentGoals(session.user.id),
+  ]);
 
   return (
-    <div className="home-center">
-      <section className="home-hero home-hero--student">
-        <p className="brand">Cozy English with Nadya</p>
-        <h1 className="greeting">Здравствуй, {displayName}</h1>
-        <p className="home-support">
-          Здесь ваш календарь занятий — темы и короткие конспекты прошлых уроков.
-        </p>
-      </section>
-      <StudentCalendar lessons={lessons} todayKey={todayKey} />
+    <div className="dash">
+      <header className="dash-greeting-block">
+        <h1 className="greeting dash-greeting">Здравствуй, {displayName}</h1>
+      </header>
+
+      <div className="dash-top">
+        <div className="dash-top-cal">
+          <StudentCalendar lessons={lessons} todayKey={todayKey} compact />
+        </div>
+        <HomeworkList items={homework} />
+      </div>
+
+      <p className="dash-wish">Have a wonderful day!</p>
+
+      <div className="dash-bottom">
+        <GoalsList goals={goals} />
+        <AssignmentReserve />
+      </div>
     </div>
   );
 }
 
 function HomeFallback() {
   return (
-    <div className="home-center">
-      <section className="home-hero" aria-hidden="true">
-        <p className="brand">Cozy English with Nadya</p>
-        <h1 className="greeting">Здравствуй…</h1>
-        <p className="home-support">Загружаем ваш кабинет.</p>
-      </section>
+    <div className="dash" aria-hidden="true">
+      <header className="dash-greeting-block">
+        <h1 className="greeting dash-greeting">Здравствуй…</h1>
+      </header>
+      <p className="dash-wish">Загружаем ваш кабинет.</p>
     </div>
   );
 }
 
-async function HomeDecor() {
-  const season = await getCurrentSeason();
-  return <SeasonalDecor season={season} />;
+async function HomeControls() {
+  const [season, naturalSeason] = await Promise.all([
+    getCurrentSeason(),
+    getNaturalSeason(),
+  ]);
+  const cookieStore = await cookies();
+  const overridden = isSeason(cookieStore.get(SEASON_COOKIE)?.value);
+
+  return (
+    <header className="home-bar home-bar--dash">
+      <SeasonSwitcher
+        season={season}
+        naturalSeason={naturalSeason}
+        overridden={overridden}
+      />
+      <LogoutButton />
+    </header>
+  );
 }
 
 export default function HomePage() {
   return (
-    <main className="home-stage seasonal-stage">
-      <Suspense fallback={null}>
-        <HomeDecor />
+    <main className="home-stage home-stage--dash">
+      <Suspense
+        fallback={
+          <header className="home-bar home-bar--dash">
+            <LogoutButton />
+          </header>
+        }
+      >
+        <HomeControls />
       </Suspense>
-      <header className="home-bar">
-        <LogoutButton />
-      </header>
       <Suspense fallback={<HomeFallback />}>
         <StudentHome />
       </Suspense>

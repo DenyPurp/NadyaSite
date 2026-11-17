@@ -180,6 +180,71 @@ async function main() {
     });
     console.log(`Seeded lesson ${dayKey}: ${sample.topic}`);
   }
+
+  await prisma.material.deleteMany({ where: { courseId: course.id } });
+  await prisma.material.create({
+    data: {
+      title: "Present Perfect — шпаргалка",
+      type: "TEXT",
+      content:
+        "already / yet / just. Have/Has + V3. Анна: повторить for/since на 5 своих примерах.",
+      courseId: course.id,
+    },
+  });
+  await prisma.material.create({
+    data: {
+      title: "Travel vocabulary list",
+      type: "LINK",
+      content: "Список из 20 слов: boarding pass, gate, delay…",
+      fileUrl: "https://example.com/travel-vocab",
+      courseId: course.id,
+    },
+  });
+  console.log("Seeded course materials");
+
+  await prisma.homework.deleteMany({ where: { studentId: student1.id } });
+  const homeworkSamples = [
+    {
+      offsetDays: -1,
+      title: "8 предложений про свою неделю (Present Perfect)",
+    },
+    {
+      offsetDays: 0,
+      title: "Диалог: weekend plans — записать голосом 1 минуту",
+    },
+    {
+      offsetDays: 2,
+      title: "Выучить 10 travel-слов и придумать 5 фраз",
+    },
+  ];
+  for (const hw of homeworkSamples) {
+    const dayKey = shiftDayKey(todayKey, hw.offsetDays);
+    await prisma.homework.create({
+      data: {
+        studentId: student1.id,
+        date: utcDateFromDayKey(dayKey),
+        title: hw.title,
+      },
+    });
+    console.log(`Seeded homework ${dayKey}: ${hw.title}`);
+  }
+
+  await prisma.goal.deleteMany({ where: { studentId: student1.id } });
+  const goals = [
+    { title: "Уверенный Present Perfect в речи", progress: 55 },
+    { title: "Словарный запас travel B1", progress: 40 },
+    { title: "Письмо учителю 80–100 слов без грубых ошибок", progress: 70 },
+  ];
+  for (const goal of goals) {
+    await prisma.goal.create({
+      data: {
+        studentId: student1.id,
+        title: goal.title,
+        progress: goal.progress,
+      },
+    });
+    console.log(`Seeded goal: ${goal.title} (${goal.progress}%)`);
+  }
 }
 
 main()
