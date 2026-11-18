@@ -17,6 +17,7 @@ import { AdminForm } from "@/components/admin-form";
 import { FileDropzone } from "@/components/file-dropzone";
 import { GoalProgressControl } from "@/components/goal-progress-control";
 import { LogoutButton } from "@/components/logout-button";
+import { StudentAccounts } from "@/components/student-accounts";
 import { lessonDateKey } from "@/lib/moscow-time";
 import { prisma } from "@/lib/prisma";
 
@@ -36,7 +37,13 @@ async function AdminBody() {
     prisma.user.findMany({
       where: { role: Role.STUDENT },
       orderBy: { displayName: "asc" },
-      select: { id: true, login: true, displayName: true },
+      select: {
+        id: true,
+        login: true,
+        displayName: true,
+        age: true,
+        schoolClass: true,
+      },
     }),
     prisma.material.findMany({
       orderBy: { createdAt: "desc" },
@@ -61,9 +68,11 @@ async function AdminBody() {
         <p className="admin-kicker">Кабинет учителя</p>
         <h1 className="admin-title">Здравствуй, {session.user.displayName}</h1>
         <p className="admin-lead">
-          Курсы, материалы, домашние задания и прогресс целей учеников.
+          Ученики, курсы, материалы, домашние задания и прогресс целей.
         </p>
       </header>
+
+      <StudentAccounts students={students} />
 
       <div className="admin-grid">
         <section className="admin-section" aria-labelledby="courses-h">
