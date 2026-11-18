@@ -1,4 +1,5 @@
 import type { HomeworkDTO } from "@/lib/dashboard";
+import { HomeworkSubmit } from "@/components/homework-submit";
 
 type HomeworkListProps = {
   items: HomeworkDTO[];
@@ -24,11 +25,22 @@ export function HomeworkList({ items }: HomeworkListProps) {
         <ul className="homework-list">
           {items.map((item) => (
             <li key={item.id} className="homework-item">
-              <span className="homework-date">{formatShortDate(item.dateKey)}</span>
-              <span className="homework-sep" aria-hidden="true">
-                :
-              </span>
-              <span className="homework-title">{item.title}</span>
+              <div className="homework-item-head">
+                <span className="homework-date">
+                  {formatShortDate(item.dateKey)}
+                </span>
+                <span className="homework-sep" aria-hidden="true">
+                  :
+                </span>
+                <span className="homework-title">{item.title}</span>
+              </div>
+              {item.description ? (
+                <p className="homework-desc">{item.description}</p>
+              ) : null}
+              <HomeworkSubmit
+                homeworkId={item.id}
+                initialSubmissions={item.submissions}
+              />
             </li>
           ))}
         </ul>

@@ -1,11 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { lessonDateKey } from "@/lib/moscow-time";
 
+export type HomeworkSubmissionDTO = {
+  id: string;
+  fileUrl: string;
+  fileName: string;
+  submittedAt: string;
+};
+
 export type HomeworkDTO = {
   id: string;
   dateKey: string;
   title: string;
   description: string | null;
+  submissions: HomeworkSubmissionDTO[];
 };
 
 export type GoalDTO = {
@@ -25,6 +33,16 @@ export async function getStudentHomework(
       date: true,
       title: true,
       description: true,
+      submissions: {
+        where: { studentId },
+        orderBy: { submittedAt: "asc" },
+        select: {
+          id: true,
+          fileUrl: true,
+          fileName: true,
+          submittedAt: true,
+        },
+      },
     },
   });
 
@@ -33,6 +51,12 @@ export async function getStudentHomework(
     dateKey: lessonDateKey(row.date),
     title: row.title,
     description: row.description,
+    submissions: row.submissions.map((s) => ({
+      id: s.id,
+      fileUrl: s.fileUrl,
+      fileName: s.fileName,
+      submittedAt: s.submittedAt.toISOString(),
+    })),
   }));
 }
 
