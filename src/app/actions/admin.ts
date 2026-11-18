@@ -1,7 +1,9 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { MaterialType, Role } from "@prisma/client";
+import { hash } from "bcryptjs";
 import { auth } from "@/auth";
 import { utcDateFromDayKey } from "@/lib/moscow-time";
 import { prisma } from "@/lib/prisma";
@@ -10,7 +12,14 @@ export type AdminActionState = {
   ok?: boolean;
   error?: string;
   message?: string;
+  /** Временный пароль после создания или сброса — показать учителю один раз */
+  tempPassword?: string;
 };
+
+const BCRYPT_ROUNDS = 10;
+const LOGIN_RE = /^[a-zA-Z0-9._-]{3,32}$/;
+const TEMP_PASSWORD_ALPHABET =
+  "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
 
 async function requireTeacher() {
   const session = await auth();
@@ -23,6 +32,35 @@ async function requireTeacher() {
 function clampProgress(value: number): number {
   if (Number.isNaN(value)) return 0;
   return Math.min(100, Math.max(0, Math.round(value)));
+}
+
+function generateTempPassword(length = 10): string {
+  const bytes = randomBytes(length);
+  let out = "";
+  for (let i = 0; i < length; i += 1) {
+    out += TEMP_PASSWORD_ALPHABET[bytes[i]! % TEMP_PASSWORD_ALPHABET.length];
+  }
+  return out;
+}
+
+function parseOptionalAge(raw: FormDataEntryValue | null): {
+  age: number | null;
+  error?: string;
+} {
+  const text = String(raw ?? "").trim();
+  if (!text) {
+    return { age: null };
+  }
+  const age = Number(text);
+  if (!Number.isInteger(age) || age < 5 || age > 25) {
+    return { age: null, error: "Возраст — целое число от 5 до 25." };
+  }
+  return { age };
+}
+
+function parseSchoolClass(raw: FormDataEntryValue | null): string | null {
+  const text = String(raw ?? "").trim();
+  return text ? text.slice(0, 16) : null;
 }
 
 export async function createCourseAction(
@@ -292,4 +330,151 @@ export async function deleteGoalAction(
   revalidatePath("/admin");
   revalidatePath("/");
   return { ok: true, message: "Цель удалена." };
+}
+
+export async function createStudentAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireTeacher())) {
+    return { error: "Нет доступа." };
+  }
+
+  const login = String(formData.get("login") ?? "").trim();
+  const displayName = String(formData.get("displayName") ?? "").trim();
+  let tempPassword = String(formData.get("tempPassword") ?? "").trim();
+  const { age, error: ageError } = parseOptionalAge(formData.get("age"));
+  const schoolClass = parseSchoolClass(formData.get("schoolClass"));
+
+  if (!LOGIN_RE.test(login)) {
+    return {
+      error:
+        "Логин: 3–32 символа (латиница, цифры, точка, _ или -).",
+    };
+  }
+  if (!displayName) {
+    return { error: "Укажите ФИО / отображаемое имя." };
+  }
+  if (ageError) {
+    return { error: ageError };
+  }
+  if (!tempPassword) {
+    tempPassword = generateTempPassword();
+  }
+  if (tempPassword.length < 6) {
+    return { error: "Временный пароль — не короче 6 символов." };
+  }
+
+  const existing = await prisma.user.findUnique({ where: { login } });
+  if (existing) {
+    return { error: "Такой логин уже занят." };
+  }
+
+  const passwordHash = await hash(tempPassword, BCRYPT_ROUNDS);
+
+  await prisma.user.create({
+    data: {
+      login,
+      passwordHash,
+      displayName,
+      role: Role.STUDENT,
+      age,
+      schoolClass,
+    },
+  });
+
+  revalidatePath("/admin");
+  return {
+    ok: true,
+    message: `Ученик «${displayName}» создан. Передайте логин и временный пароль.`,
+    tempPassword,
+  };
+}
+
+export async function updateStudentAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireTeacher())) {
+    return { error: "Нет доступа." };
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  const displayName = String(formData.get("displayName") ?? "").trim();
+  const { age, error: ageError } = parseOptionalAge(formData.get("age"));
+  const schoolClass = parseSchoolClass(formData.get("schoolClass"));
+
+  if (!id) {
+    return { error: "Нет id ученика." };
+  }
+  if (!displayName) {
+    return { error: "Укажите ФИО / отображаемое имя." };
+  }
+  if (ageError) {
+    return { error: ageError };
+  }
+
+  const student = await prisma.user.findFirst({
+    where: { id, role: Role.STUDENT },
+    select: { id: true },
+  });
+  if (!student) {
+    return { error: "Ученик не найден." };
+  }
+
+  await prisma.user.update({
+    where: { id },
+    data: {
+      displayName,
+      age,
+      schoolClass,
+    },
+  });
+
+  revalidatePath("/admin");
+  return { ok: true, message: "Данные ученика обновлены." };
+}
+
+export async function resetStudentPasswordAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  if (!(await requireTeacher())) {
+    return { error: "Нет доступа." };
+  }
+
+  const id = String(formData.get("id") ?? "").trim();
+  let tempPassword = String(formData.get("tempPassword") ?? "").trim();
+
+  if (!id) {
+    return { error: "Нет id ученика." };
+  }
+
+  const student = await prisma.user.findFirst({
+    where: { id, role: Role.STUDENT },
+    select: { id: true, displayName: true },
+  });
+  if (!student) {
+    return { error: "Ученик не найден." };
+  }
+
+  if (!tempPassword) {
+    tempPassword = generateTempPassword();
+  }
+  if (tempPassword.length < 6) {
+    return { error: "Временный пароль — не короче 6 символов." };
+  }
+
+  const passwordHash = await hash(tempPassword, BCRYPT_ROUNDS);
+  await prisma.user.update({
+    where: { id },
+    data: { passwordHash },
+  });
+
+  revalidatePath("/admin");
+  return {
+    ok: true,
+    message: `Пароль для «${student.displayName}» сброшен. Передайте новый временный пароль.`,
+    tempPassword,
+  };
 }

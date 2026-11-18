@@ -48,6 +48,12 @@ export function AdminForm({
           {state.message}
         </p>
       ) : null}
+      {state.tempPassword ? (
+        <p className="admin-temp-password" role="status">
+          Временный пароль:{" "}
+          <code className="admin-temp-password-value">{state.tempPassword}</code>
+        </p>
+      ) : null}
       <button
         type="submit"
         className={danger ? "admin-submit admin-submit--danger" : "admin-submit"}

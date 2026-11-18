@@ -11,6 +11,8 @@ type SeedUser = {
   password: string;
   displayName: string;
   role: Role;
+  age?: number | null;
+  schoolClass?: string | null;
 };
 
 /** Plain passwords are for local/dev seeding only — see README. */
@@ -26,12 +28,16 @@ const SEED_USERS: SeedUser[] = [
     password: "student123",
     displayName: "Анна Ученица",
     role: Role.STUDENT,
+    age: 14,
+    schoolClass: "8А",
   },
   {
     login: "student2",
     password: "student123",
     displayName: "Иван Ученик",
     role: Role.STUDENT,
+    age: 13,
+    schoolClass: "7Б",
   },
 ];
 
@@ -121,11 +127,15 @@ async function main() {
         passwordHash,
         displayName: user.displayName,
         role: user.role,
+        age: user.age ?? null,
+        schoolClass: user.schoolClass ?? null,
       },
       update: {
         passwordHash,
         displayName: user.displayName,
         role: user.role,
+        age: user.age ?? null,
+        schoolClass: user.schoolClass ?? null,
       },
     });
 
