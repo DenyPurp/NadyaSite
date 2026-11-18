@@ -43,8 +43,9 @@ model User {
   enrollments      Enrollment[]
   lessons          Lesson[]          @relation("StudentLessons")
   assignmentIssues AssignmentIssue[]
-  homeworks        Homework[]
-  goals            Goal[]
+  homeworks             Homework[]
+  homeworkSubmissions   HomeworkSubmission[]
+  goals                 Goal[]
 }
 
 model Course {
@@ -167,9 +168,27 @@ model Homework {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student     User                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  submissions HomeworkSubmission[]
 
   @@index([studentId, date])
+}
+
+/// Вложение ученика к домашнему заданию (фото / файл)
+model HomeworkSubmission {
+  id          String   @id @default(cuid())
+  homeworkId  String
+  studentId   String
+  fileUrl     String
+  fileName    String
+  submittedAt DateTime @default(now())
+
+  homework Homework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  student  User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([homeworkId])
+  @@index([studentId])
+  @@index([homeworkId, studentId])
 }
 
 /// Учебная цель ученика с прогрессом 0–100

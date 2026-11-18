@@ -52,7 +52,18 @@ async function AdminBody() {
     }),
     prisma.homework.findMany({
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
-      include: { student: { select: { displayName: true, login: true } } },
+      include: {
+        student: { select: { displayName: true, login: true } },
+        submissions: {
+          orderBy: { submittedAt: "asc" },
+          select: {
+            id: true,
+            fileUrl: true,
+            fileName: true,
+            submittedAt: true,
+          },
+        },
+      },
       take: 40,
     }),
     prisma.goal.findMany({
@@ -262,6 +273,38 @@ async function AdminBody() {
                 {hw.description ? (
                   <p className="admin-item-body">{hw.description}</p>
                 ) : null}
+                {hw.submissions.length > 0 ? (
+                  <div className="admin-hw-subs">
+                    <p className="admin-meta">Ответ ученика:</p>
+                    <ul className="admin-hw-files">
+                      {hw.submissions.map((sub) => (
+                        <li key={sub.id}>
+                          <a
+                            href={sub.fileUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            download={sub.fileName}
+                            className="admin-hw-file-link"
+                          >
+                            {sub.fileName}
+                          </a>
+                          <span className="admin-meta">
+                            {" "}
+                            ·{" "}
+                            {sub.submittedAt.toLocaleString("ru-RU", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="admin-meta">Вложений пока нет.</p>
+                )}
                 <AdminForm
                   action={deleteHomeworkAction}
                   submitLabel="Удалить ДЗ"

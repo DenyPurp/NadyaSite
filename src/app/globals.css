@@ -786,12 +786,25 @@ button.calendar-cell:not(:disabled):hover {
 }
 
 .homework-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--vine) 28%, transparent);
+}
+
+.homework-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.homework-item-head {
   display: grid;
   grid-template-columns: auto auto 1fr;
   gap: 0.4rem 0.45rem;
   align-items: baseline;
-  font-size: 0.98rem;
-  line-height: 1.4;
 }
 
 .homework-date {
@@ -806,6 +819,109 @@ button.calendar-cell:not(:disabled):hover {
 
 .homework-title {
   color: color-mix(in srgb, var(--ink) 88%, transparent);
+}
+
+.homework-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+  max-width: 42ch;
+}
+
+.homework-submit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.homework-submit-hint {
+  margin: 0;
+  font-size: 0.86rem;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+.homework-submit-ok {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--midnight-green, #105666);
+}
+
+.homework-files {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.homework-file {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.75rem;
+}
+
+.homework-file-link {
+  color: var(--midnight-green, #105666);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  word-break: break-word;
+}
+
+.homework-file-link:hover {
+  color: var(--moss-deep);
+}
+
+.homework-file-remove {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: 0.84rem;
+  color: color-mix(in srgb, var(--ink) 55%, #d3968c);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.homework-file-remove:hover:not(:disabled) {
+  color: #d3968c;
+}
+
+.homework-file-remove:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.homework-submit .file-dropzone {
+  padding: 0.7rem 0.85rem;
+}
+
+.admin-hw-subs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.admin-hw-files {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-hw-file-link {
+  color: var(--midnight-green, #105666);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  word-break: break-word;
 }
 
 .goal-item {
@@ -1192,6 +1308,11 @@ button.calendar-cell:not(:disabled):hover {
   border-color: var(--moss);
   border-style: solid;
   background: color-mix(in srgb, var(--moss-green) 12%, var(--paper));
+}
+
+.file-dropzone--busy {
+  opacity: 0.72;
+  cursor: wait;
 }
 
 .file-dropzone-label {
